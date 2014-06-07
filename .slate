@@ -1,0 +1,28 @@
+# bind key:modifiers operation parameter+
+
+alias key alt
+
+bind r:${key} relaunch
+
+bind a:${key} move screenOriginX;screenOriginY screenSizeX/2;screenSizeY
+bind d:${key} move screenOriginX+screenSizeX/2;screenOriginY screenSizeX/2;screenSizeY
+bind s:${key} move screenOriginX;screenOriginY+screenSizeY/2 screenSizeX;screenSizeY/2
+bind w:${key} move screenOriginX;screenOriginY screenSizeX;screenSizeY/2
+bind x:${key} move screenOriginX;screenOriginY screenSizeX;screenSizeY
+
+bind h:${key} hint asdfghjkl
+
+bind t:${key} grid padding:20 0:8,6
+
+# Application shortcuts
+# bind v:${key} shell path:~/ '/usr/local/bin/mvim'
+bind f:${key} focus "Firefox"
+bind g:${key} focus "Google Chrome"
+bind v:${key} focus "MacVim"
+bind k:${key} focus "Skim"
+bind p:${key} focus "Preview"
+bind m:${key} focus "Mathematica"
+bind c:${key} focus "iCal"
+
+# Override cmd-tab, you know, just to annoy Silver
+# bind tab:cmd switch

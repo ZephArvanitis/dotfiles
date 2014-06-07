@@ -1,0 +1,33 @@
+"hg6978
+
+loadplugins '\.(js|penta)$'
+group user
+map -count -modes=n,v <C-h> <count>gT
+map -count -modes=n,v <C-j> <count>gT
+map -count -modes=n,v <C-k> <count>gt
+map -count -modes=n,v <C-l> <count>gt
+map -count -modes=n,v <C-S-H> <count>:tabm<Space>-1<Return>
+map -count -modes=n,v <C-S-J> <count>:tabm<Space>-1<Return>
+map -count -modes=n,v <C-S-K> <count>:tabm<Space>+1<Return>
+map -count -modes=n,v <C-S-L> <count>:tabm<Space>+1<Return>
+map -count -modes=n,v <Space> <count>:
+map -count -modes=n,v sb <count>:open<Space>britannica<Space>
+map -count -modes=n,v Sb <count>:tabopen<Space>britannica<Space>
+map -count -modes=n,v sc <count>:open<Space>mdbg<Space>
+map -count -modes=n,v Sc <count>:tabopen<Space>mdbg<Space>
+map -count -modes=n,v sd <count>:open<Space>google<Space>define:<Space>
+map -count -modes=n,v Sd <count>:tabopen<Space>google<Space>define:<Space>
+map -count -modes=n,v sg <count>:open<Space>google<Space>
+map -count -modes=n,v Sg <count>:tabopen<Space>google<Space>
+map -count -modes=n,v sh <count>:open<Space>hoogle<Space>
+map -count -modes=n,v Sh <count>:tabopen<Space>hoogle<Space>
+map -count -modes=n,v sk <count>:open<Space>wikipedia<Space>
+map -count -modes=n,v Sk <count>:tabopen<Space>wikipedia<Space>
+map -count -modes=n,v sm <count>:open<Space>maps<Space>
+map -count -modes=n,v Sm <count>:tabopen<Space>maps<Space>
+map -count -modes=n,v sw <count>:open<Space>wolframalpha<Space>
+map -count -modes=n,v Sw <count>:tabopen<Space>wolframalpha<Space>
+map -count -modes=n,v sy <count>:open<Space>yellowbridge<Space>
+map -count -modes=n,v Sy <count>:tabopen<Space>yellowbridge<Space>
+
+" vim: set ft=pentadactyl:
