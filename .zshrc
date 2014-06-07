@@ -1,3 +1,4 @@
+# Much of this is shamelessly stolen from gibiansky/dotfiles
 # Get colors and extensions and run them
 autoload colors && colors
 # Make TeX behave
