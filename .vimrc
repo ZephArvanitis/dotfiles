@@ -20,6 +20,8 @@ Bundle 'Haskell-Conceal'
 Bundle 'indenthaskell.vim'
 Bundle 'lukerandall/haskellmode-vim'
 Bundle 'gibiansky/vim-latex-objects'
+" Rust?
+Bundle 'wting/rust.vim'
 let g:haddock_browser='open'
 Bundle 'scrooloose/Syntastic'
 let g:syntastic_always_populate_loc_list=1
@@ -64,6 +66,8 @@ set textwidth=75
 imap <C-d> <ESC>lxi
 " Map space to : for ease of use (also to placate Silver)
 map <SPACE> :
+" Put .swp's in a more reasonable place
+set backupdir=~/.vim/tmp
 
 " Deal with non-zero history
 set history=1000

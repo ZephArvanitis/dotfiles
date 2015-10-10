@@ -5,6 +5,9 @@ export TEXINPUTS=".:~/myLaTeX:"
 # Use coreutils instead of whatever mac provides
 export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
 export PATH="/Users/narvanitis/Library/Haskell/bin:$PATH"
+export PATH="$(brew --prefix)/bin:$PATH"
+# Binutils (installed by hand)
+export PATH=/usr/local/i386-elf/bin:$PATH
 # Enable autocompletion inside git repositories
 fpath=(~/.zsh $fpath)
 zstyle ':completion:*:*:git:*' script ~/.git-completion.sh
