@@ -1,0 +1,11 @@
+# Vim files
+*~
+*.swp
+*.swo
+
+# Python
+*.pyc
+
+# IPython
+.ipynb_checkpoints
+
