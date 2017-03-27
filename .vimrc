@@ -1,8 +1,6 @@
 " We don't care about vi
 set nocompatible
 
-" set guifont=Papyrus:h11
-
 " VUNDLE/BUNDLE THINGS
 filetype off
 set rtp+=~/.vim/bundle/vundle/
@@ -20,8 +18,6 @@ Bundle 'Haskell-Conceal'
 Bundle 'indenthaskell.vim'
 Bundle 'lukerandall/haskellmode-vim'
 Bundle 'gibiansky/vim-latex-objects'
-" Rust?
-Bundle 'wting/rust.vim'
 let g:haddock_browser='open'
 Bundle 'scrooloose/Syntastic'
 let g:syntastic_always_populate_loc_list=1
@@ -39,6 +35,8 @@ syntax on
 set number
 " Indentation!
 set smartindent
+" Stop highlighting all matches in searches
+set nohlsearch
 " Folding stuff
 set foldmethod=indent
 set foldminlines=3
@@ -64,17 +62,21 @@ set textwidth=75
 " Shortcuts
 " Delete forward in insert mode with C-d
 imap <C-d> <ESC>lxi
-" Map space to : for ease of use (also to placate Silver)
+" Move around quickly with the arrow keys (not in insert mode)
+map <Up> 10k
+map <Down> 10j
+map <Left> 10h
+map <Right> 10l
+
+" Map space to : for ease of use
 map <SPACE> :
-" Put .swp's in a more reasonable place
-set backupdir=~/.vim/tmp
 
 " Deal with non-zero history
 set history=1000
 
 " Set the look of vim
 set background=dark
-colo macvim
+colo ron
 
 " LaTeX things
 if has('macunix')

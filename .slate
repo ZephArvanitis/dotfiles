@@ -2,20 +2,29 @@
 
 alias key alt
 
+# Monitor handling
+alias mon-laptop 0
+alias mon-dell 1
+
+# Restart slate after editing .slate
 bind r:${key} relaunch
 
+# Basic window rearrangement
 bind a:${key} move screenOriginX;screenOriginY screenSizeX/2;screenSizeY
 bind d:${key} move screenOriginX+screenSizeX/2;screenOriginY screenSizeX/2;screenSizeY
 bind s:${key} move screenOriginX;screenOriginY+screenSizeY/2 screenSizeX;screenSizeY/2
 bind w:${key} move screenOriginX;screenOriginY screenSizeX;screenSizeY/2
 bind x:${key} move screenOriginX;screenOriginY screenSizeX;screenSizeY
 
+# Throw window to other display
+bind b:${key} throw next
+
+# Hints!
 bind h:${key} hint asdfghjkl
 
 # Application shortcuts
-# bind v:${key} shell path:~/ '/usr/local/bin/mvim'
 bind f:${key} focus "Firefox"
-bind g:${key} focus "Safari"
+bind g:${key} focus "Chrome"
 bind v:${key} focus "MacVim"
 bind k:${key} focus "Skim"
 bind p:${key} focus "Preview"
@@ -24,8 +33,4 @@ bind l:${key} focus "Calendar"
 bind t:${key} focus "iTerm"
 bind i:${key} focus "Adium"
 bind y:${key} focus "Sublime Text 2"
-bind e:${key} focus "Europa Notebook"
 bind o:${key} focus "OmmWriter"
-
-# Override cmd-tab, you know, just to annoy Silver
-# bind tab:cmd switch

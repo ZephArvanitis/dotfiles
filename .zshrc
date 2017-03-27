@@ -153,4 +153,5 @@ function vimode_color {
 vimode='$(vimode_color)'
 
 # The final prompt! Ain't it adorable?
-PROMPT="$exit_code_color$history_num $vimode\[*_*]/$color_reset$exit_color $cur_time $prompt_user $prompt_cwd "'$(prompt_char)'" $color_reset"
+PROMPT="$exit_code_color$history_num $vimode\[*_*]/$color_reset$exit_color $cur_time $prompt_user $prompt_cwd
+"'$(prompt_char)'" $color_reset"
