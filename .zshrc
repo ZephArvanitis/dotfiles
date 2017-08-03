@@ -1,3 +1,27 @@
+
+PATH=$PATH:/u/nyc/arvaniti/local/bin
+alias xclip='xclip -selection clipboard'
+alias tcp='tmux show-buffer | xclip'
+
+# Much of this is shamelessly stolen from gibiansky/dotfiles
+# Use a pythonrc file
+export PYTHONSTARTUP="$HOME/.pythonrc"
+# various shortcuts
+alias -g @='&> /dev/null &!'
+alias notes='vim ~/.notes'
+alias hgrep='history 0 | grep'
+alias useful-dir='echo `pwd` " - " $1 >> ~/useful-dirs'
+alias io="inout | grep 'arvaniti\|hargus\|greisman\|klepeis\|donchev\|mcgibbon\|yuku'"
+# alias testthing="if ! [ \"$VIRTUAL_ENV\" = \"/u/en/arvaniti/env\" ]; then; echo 'no venv'; else; echo 'venv'; fi;"
+alias activate="source /u/en/arvaniti/env/bin/activate"
+alias droplet="ssh -i ~/.ssh/heytasha_rsa root@162.243.132.233"
+# use virtualenv version of ipython if present
+alias ipy="python -c 'import IPython; IPython.terminal.ipapp.launch_new_instance()'"
+
+# Remap caps lock to escape
+xmodmap -e "keycode 66 = Escape NoSymbol Escape"
+xmodmap -e "clear lock"
+
 # Get colors and extensions and run them
 autoload colors && colors
 # Make TeX behave
@@ -8,22 +32,27 @@ export PATH="/Users/narvanitis/Library/Haskell/bin:$PATH"
 export PATH="$(brew --prefix)/bin:$PATH"
 # Binutils (installed by hand)
 export PATH=/usr/local/i386-elf/bin:$PATH
+alias ls='ls --color=auto'
+# Color tab/^D completion like ls
+zstyle ':completion:*' list-colors "${(@s.:.)LS_COLORS}"
+autoload -Uz compinit
+compinit
 # Enable autocompletion inside git repositories
 fpath=(~/.zsh $fpath)
+autoload -Uz compinit && compinit
 zstyle ':completion:*:*:git:*' script ~/.git-completion.sh
-# Make autojump work
-[[ -s `brew --prefix`/etc/autojump.zsh ]] && . `brew --prefix`/etc/autojump.zsh
-# Make colors a thing
-alias ls='ls --color=auto'
-alias -g @='&> /dev/null &!'
-alias notes='vim ~/.notes'
-alias logs='vim ~/.logs'
+
 # And vi mode as well
 bindkey -v
 bindkey -M viins '^a' beginning-of-line
 bindkey -M vicmd '^a' beginning-of-line
 bindkey -M viins '^e' end-of-line
 bindkey -M vicmd '^e' end-of-line
+# Set short timeout to reduce jarring lag after <ESC>
+export KEYTIMEOUT=1
+# Handle deletion of old text gracefully
+bindkey -M viins "^?" backward-delete-char
+bindkey -M viins "^H" backward-delete-char
 
 # Function to clear the screen, and allow it to happen repeatedly
 function clear-screen {
@@ -42,17 +71,15 @@ HISTSIZE=10000000
 SAVEHIST=10000000
 
 # Store timestamps and time elapsed in history.
-set extendedhistory
+setopt extendedhistory
 
 # Incrementally append to history, as soon as things are entered.
-setopt incappendhistory
+setopt appendhistory
 
 # Don't have duplicates in history.
 setopt histignoredups
-
 # Get rid of extraneous whitespace in history commands.
 setopt hist_reduce_blanks
-
 # Don't store 'history' and 'fc' commands into the history.
 setopt histnostore
 
@@ -99,8 +126,9 @@ prompt_user="%n@%m"
 function prompt_char {
     # = means it ignores aliases, apparently... (uses original thing)
     BRANCH=`=git branch 2> /dev/null | grep '*' | sed 's/* //'`
-    BRANCH_NAME=${BRANCH:0:15}...
+    BRANCH_NAME=${BRANCH:0:15}
     =git branch >/dev/null 2>/dev/null && echo "($BRANCH_NAME) ⇒" && return
+    =git branch >/dev/null 2>/dev/null && echo "⇒" && return
     echo '$'
 }
 
@@ -152,6 +180,18 @@ function vimode_color {
 }
 vimode='$(vimode_color)'
 
+# Also offer visual difference based on vi mode
+function vimode_symbol {
+    if [[ $CURRENT_KEYMAP == "vicmd" ]]; then
+        echo -n ☆☆☆
+    else
+        echo -n ★★★
+    fi
+}
+vimodesym='$(vimode_symbol)'
+
 # The final prompt! Ain't it adorable?
-PROMPT="$exit_code_color$history_num $vimode\[*_*]/$color_reset$exit_color $cur_time $prompt_user $prompt_cwd
-"'$(prompt_char)'" $color_reset"
+# Old prompt with time
+# PROMPT="$exit_code_color$history_num $vimode$vimodesym$color_reset$exit_color $cur_time $prompt_user $prompt_cwd "'$(prompt_char)'" $color_reset"
+PROMPT="$vimode$vimodesym$color_reset$exit_code_color$history_num $cur_time $prompt_user $prompt_cwd"$'\n''$(prompt_char)'" $color_reset"
+

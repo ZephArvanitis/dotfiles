@@ -11,6 +11,8 @@ Bundle 'jcf/vim-latex'
 Bundle 'tpope/vim-surround'
 Bundle 'tpope/vim-repeat'
 Bundle 'petRUShka/vim-opencl'
+" Rust
+Bundle 'rust-lang/rust.vim'
 " Bundle 'Floobits/floobits-vim'
 set updatetime=100 " Will write the swap file and also update the web UI every 100 ms
 " Haskell joy
@@ -19,27 +21,39 @@ Bundle 'indenthaskell.vim'
 Bundle 'lukerandall/haskellmode-vim'
 Bundle 'gibiansky/vim-latex-objects'
 let g:haddock_browser='open'
+Bundle 'tpope/vim-markdown'
 Bundle 'scrooloose/Syntastic'
+Bundle 'vim-scripts/indentpython.vim'
+Bundle 'tmhedberg/SimpylFold'
 let g:syntastic_always_populate_loc_list=1
 let g:syntastic_auto_loc_list=1
-let g:syntastic_haskell_checkers=["hlint"]
-
+" Python checking/autopep8 formatting
+let g:syntastic_python_checkers = ['python', 'flake8', 'pylint']
+au FileType python setlocal formatprg=autopep8\ -
+" autocmd FileType python setlocal foldenable foldmethod=syntax
+autocmd BufWinEnter *.py setlocal foldexpr=SimpylFold(v:lnum) foldmethod=expr
+autocmd BufWinLeave *.py setlocal foldexpr< foldmethod<
+let g:SimpylFold_docstring_preview = 2
+map <F2> :lprev<CR>
+map <F3> :lnext<CR>
 " Make CtrlP work...maybe
 set runtimepath^=~/.vim/bundle/ctrlp.vim
-
-" Essentially allow plugins?
 filetype indent plugin on
+
+" NON-BUNDLE STUFF
 " Syntax highlighting
 syntax on
 " Line numbers
 set number
 " Indentation!
 set smartindent
+set cindent
 " Stop highlighting all matches in searches
 set nohlsearch
 " Folding stuff
 set foldmethod=indent
 set foldminlines=3
+set foldignore=
 " Tabs are 4 spaces instead of 8
 set expandtab
 set tabstop=4
@@ -55,8 +69,6 @@ map <C-h> :tabp<CR>
 map <C-l> :tabn<CR>
 map <C-t> :tabnew 
 set autochdir
-" Spell-checking. 
-au! BufEnter,BufRead *.txt set spell
 " Line wrapping!
 set textwidth=75
 " Shortcuts
@@ -76,19 +88,25 @@ set history=1000
 
 " Set the look of vim
 set background=dark
-colo ron
+colo koehler
 
 " LaTeX things
-if has('macunix')
-    let g:Tex_ViewRule_pdf='Skim'
-endif
 au BufRead,BufNewFile *.tex source ~/.vim/tex.vim
 
-" Haskell things
-au BufRead,BufNewFile *.hs source ~/.vim/haskell.vim
+" Enable mpr syntax highlighting
+au BufRead,BufNewFile *.mpr set syntax=mpr
+au BufRead,BufNewFile *.mpr set nospell
 
-" Enable FHiCL syntax highlighting
-au BufRead,BufNewFile *.fcl set syntax=fcl
-au BufRead,BufNewFile *.fcl set nospell
+" Enable maeff syntax highlighting
+au BufRead,BufNewFile *.maeff set syntax=maeff
+au BufRead,BufNewFile *.maeff set nospell
 
-set wildignore=*.o,*.obj,*.hi,*.pdf,*.log,*.aux,*.out
+" Force markdown syntax highlighting on .md
+autocmd BufNewFile,BufReadPost *.md set filetype=markdown
+
+" Don't wrap text in .dict files
+au! BufEnter,BufRead *.dict set nowrap
+
+set wildignore=*.o,*.obj,*.hi,*.pdf,*.log,*.aux
+set listchars=tab:>-,trail:~,extends:>,precedes:<
+set list
