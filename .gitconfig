@@ -1,6 +1,6 @@
 [user]
-	name = Tasha Arvanitis
-	email = arvaniti@deshawresearch.com
+	name  = Tasha Arvanitis
+	email = tasha.arvanitis@gmail.com
 [color]
 	ui = true
 [alias]
@@ -10,5 +10,5 @@
     files = diff-tree --no-commit-id --name-status -r
 
 [core]
-	excludesfile = /u/nyc/arvaniti/.gitignore_global
+	excludesfile = /Users/narvanitis/.gitignore_global
 	editor = vim
