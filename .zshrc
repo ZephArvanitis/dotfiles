@@ -1,5 +1,18 @@
+# DESRES-specific
+if [ $USER = "arvaniti" ]; then
+    alias io="inout | grep 'arvaniti\|hargus\|greisman\|klepeis\|donchev\|mcgibbon\|yuku'"
+    alias activate="source /u/en/arvaniti/env/bin/activate"
+    # Remap caps lock to escape
+    xmodmap -e "keycode 66 = Escape NoSymbol Escape"
+    xmodmap -e "clear lock"
+fi
 
-PATH=$PATH:/u/nyc/arvaniti/local/bin
+# GENERAL
+export PATH="/usr/local/bin:$PATH"
+export PATH="/usr/local/share/dotnet:$PATH"
+export PATH="/Library/Tex/texbin:$PATH"
+export PATH="/Users/narvanitis/opt/anaconda3/condabin:$PATH"
+export PATH="$PATH:/Users/narvanitis/.dotnet/tools"
 alias xclip='xclip -selection clipboard'
 alias tcp='tmux show-buffer | xclip'
 
@@ -11,16 +24,9 @@ alias -g @='&> /dev/null &!'
 alias notes='vim ~/.notes'
 alias hgrep='history 0 | grep'
 alias useful-dir='echo `pwd` " - " $1 >> ~/useful-dirs'
-alias io="inout | grep 'arvaniti\|hargus\|greisman\|klepeis\|donchev\|mcgibbon\|yuku'"
-# alias testthing="if ! [ \"$VIRTUAL_ENV\" = \"/u/en/arvaniti/env\" ]; then; echo 'no venv'; else; echo 'venv'; fi;"
-alias activate="source /u/en/arvaniti/env/bin/activate"
 alias droplet="ssh -i ~/.ssh/heytasha_rsa root@162.243.132.233"
 # use virtualenv version of ipython if present
 alias ipy="python -c 'import IPython; IPython.terminal.ipapp.launch_new_instance()'"
-
-# Remap caps lock to escape
-xmodmap -e "keycode 66 = Escape NoSymbol Escape"
-xmodmap -e "clear lock"
 
 # Get colors and extensions and run them
 autoload colors && colors
@@ -28,10 +34,10 @@ autoload colors && colors
 export TEXINPUTS=".:~/myLaTeX:"
 # Use coreutils instead of whatever mac provides
 export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
-export PATH="/Users/narvanitis/Library/Haskell/bin:$PATH"
+# export PATH="/Users/narvanitis/Library/Haskell/bin:$PATH"
 export PATH="$(brew --prefix)/bin:$PATH"
 # Binutils (installed by hand)
-export PATH=/usr/local/i386-elf/bin:$PATH
+# export PATH=/usr/local/i386-elf/bin:$PATH
 alias ls='ls --color=auto'
 # Color tab/^D completion like ls
 zstyle ':completion:*' list-colors "${(@s.:.)LS_COLORS}"
@@ -194,4 +200,20 @@ vimodesym='$(vimode_symbol)'
 # Old prompt with time
 # PROMPT="$exit_code_color$history_num $vimode$vimodesym$color_reset$exit_color $cur_time $prompt_user $prompt_cwd "'$(prompt_char)'" $color_reset"
 PROMPT="$vimode$vimodesym$color_reset$exit_code_color$history_num $cur_time $prompt_user $prompt_cwd"$'\n''$(prompt_char)'" $color_reset"
+
+
+# >>> conda initialize >>>
+# !! Contents within this block are managed by 'conda init' !!
+__conda_setup="$('/Users/narvanitis/opt/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+if [ $? -eq 0 ]; then
+    eval "$__conda_setup"
+else
+    if [ -f "/Users/narvanitis/opt/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/Users/narvanitis/opt/anaconda3/etc/profile.d/conda.sh"
+    else
+        export PATH="/Users/narvanitis/opt/anaconda3/bin:$PATH"
+    fi
+fi
+unset __conda_setup
+# <<< conda initialize <<<
 

@@ -3,28 +3,28 @@ set nocompatible
 
 " VUNDLE/BUNDLE THINGS
 filetype off
-set rtp+=~/.vim/bundle/vundle/
-call vundle#rc()
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
 " let Vundle manage Vundle
-Bundle 'gmarik/vundle'
-Bundle 'jcf/vim-latex'
-Bundle 'tpope/vim-surround'
-Bundle 'tpope/vim-repeat'
-Bundle 'petRUShka/vim-opencl'
+Plugin 'gmarik/vundle'
+Plugin 'lervag/vimtex'
+let g:vimtex_view_method = 'skim'
+Plugin 'tpope/vim-surround'
+Plugin 'tpope/vim-repeat'
+Plugin 'petRUShka/vim-opencl'
 " Rust
-Bundle 'rust-lang/rust.vim'
-" Bundle 'Floobits/floobits-vim'
-set updatetime=100 " Will write the swap file and also update the web UI every 100 ms
+Plugin 'rust-lang/rust.vim'
 " Haskell joy
-Bundle 'Haskell-Conceal'
-Bundle 'indenthaskell.vim'
-Bundle 'lukerandall/haskellmode-vim'
-Bundle 'gibiansky/vim-latex-objects'
+Plugin 'Haskell-Conceal'
+Plugin 'indenthaskell.vim'
+Plugin 'lukerandall/haskellmode-vim'
+Plugin 'gibiansky/vim-latex-objects'
 let g:haddock_browser='open'
-Bundle 'tpope/vim-markdown'
-Bundle 'scrooloose/Syntastic'
-Bundle 'vim-scripts/indentpython.vim'
-Bundle 'tmhedberg/SimpylFold'
+Plugin 'tpope/vim-markdown'
+Plugin 'scrooloose/Syntastic'
+Plugin 'vim-scripts/indentpython.vim'
+Plugin 'tmhedberg/SimpylFold'
+call vundle#end()
 let g:syntastic_always_populate_loc_list=1
 let g:syntastic_auto_loc_list=1
 " Python checking/autopep8 formatting
@@ -43,6 +43,8 @@ filetype indent plugin on
 " NON-BUNDLE STUFF
 " Syntax highlighting
 syntax on
+" Backspace through indents, newlines, and past where I started editing.
+set backspace=indent,eol,start
 " Line numbers
 set number
 " Indentation!
@@ -91,7 +93,7 @@ set background=dark
 colo koehler
 
 " LaTeX things
-au BufRead,BufNewFile *.tex source ~/.vim/tex.vim
+" au BufRead,BufNewFile *.tex source ~/.vim/tex.vim
 
 " Enable mpr syntax highlighting
 au BufRead,BufNewFile *.mpr set syntax=mpr

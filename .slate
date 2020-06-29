@@ -17,20 +17,20 @@ bind w:${key} move screenOriginX;screenOriginY screenSizeX;screenSizeY/2
 bind x:${key} move screenOriginX;screenOriginY screenSizeX;screenSizeY
 
 # Throw window to other display
-bind b:${key} throw next
+bind u:${key} throw next
 
 # Hints!
 bind h:${key} hint asdfghjkl
 
 # Application shortcuts
-bind f:${key} focus "Firefox"
-bind g:${key} focus "Chrome"
-bind v:${key} focus "MacVim"
-bind k:${key} focus "Skim"
+bind k:${key} focus "Anki"
 bind p:${key} focus "Preview"
-bind m:${key} focus "Mathematica"
 bind l:${key} focus "Calendar"
 bind t:${key} focus "iTerm"
-bind i:${key} focus "Adium"
-bind y:${key} focus "Sublime Text 2"
-bind o:${key} focus "OmmWriter"
+bind g:${key} focus "Safari"
+bind m:${key} focus "Thunderbird"
+bind i:${key} focus "Reminders"
+bind b:${key} focus "Notes"
+bind p:${key} focus "Messages"
+bind o:${key} focus "WhatsApp"
+bind v:${key} focus "Vivaldi"
