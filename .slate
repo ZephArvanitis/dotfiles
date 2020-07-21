@@ -23,14 +23,29 @@ bind u:${key} throw next
 bind h:${key} hint asdfghjkl
 
 # Application shortcuts
-bind k:${key} focus "Anki"
-bind p:${key} focus "Preview"
-bind l:${key} focus "Calendar"
-bind t:${key} focus "iTerm"
+#    a – taken for window rearrangement
+#b
+bind c:${key} focus "Chrome"
+#    d – taken for window rearrangement
+#e
+bind f:${key} focus "Firefox"
 bind g:${key} focus "Safari"
+#h
+#i
+#j
+bind k:${key} focus "Anki"
+bind l:${key} focus "Calendar"
 bind m:${key} focus "Thunderbird"
-bind i:${key} focus "Reminders"
-bind b:${key} focus "Notes"
-bind p:${key} focus "Messages"
+#n
 bind o:${key} focus "WhatsApp"
-bind v:${key} focus "Vivaldi"
+bind p:${key} focus "Preview"
+bind q:${key} focus "Slack"
+#    r – taken for slate refresh
+#    s – taken for window rearrangement
+bind t:${key} focus "iTerm2"
+#    u – taken for window rearrangement
+bind v:${key} focus "Code" # VS Code, designated "Code" in activity monitor
+#    w – taken for window rearrangement
+#    x – taken for window rearrangement
+bind y:${key} focus "TiddlyDesktop"
+#z
