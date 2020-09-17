@@ -1,11 +1,33 @@
-# Vim files
+# Miscellaneous files I never want in git
+#
+# Vim files #
+#############
 *~
-*.swp
-*.swo
+*.sw?
 
-# Python
+# Compiled source #
+###################
+*.o
+*.hi
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Python #
+##########
 *.pyc
 
-# IPython
+# IPython #
+###########
 .ipynb_checkpoints
 
+# VSCode settings files #
+#########################
+**/.vscode/settings.json

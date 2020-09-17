@@ -48,4 +48,4 @@ bind v:${key} focus "Code" # VS Code, designated "Code" in activity monitor
 #    w – taken for window rearrangement
 #    x – taken for window rearrangement
 bind y:${key} focus "TiddlyDesktop"
-#z
+bind z:${key} focus "Azure Data Studio"

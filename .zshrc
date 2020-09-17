@@ -13,6 +13,10 @@ export PATH="/usr/local/share/dotnet:$PATH"
 export PATH="/Library/Tex/texbin:$PATH"
 export PATH="/Users/narvanitis/opt/anaconda3/condabin:$PATH"
 export PATH="$PATH:/Users/narvanitis/.dotnet/tools"
+export PATH="/usr/local/Cellar/mssql-tools/14.0.5.0/bin/:$PATH"
+# ruby executables like pod
+export PATH="/usr/local/lib/ruby/gems/2.6.0/bin:$PATH"
+
 alias xclip='xclip -selection clipboard'
 alias tcp='tmux show-buffer | xclip'
 
@@ -129,6 +133,7 @@ cur_time="%*"
 prompt_user="%n@%m"
 
 # Use a different prompt character if I'm inside a git repository.
+# Show the branch I'm on, too.
 function prompt_char {
     # = means it ignores aliases, apparently... (uses original thing)
     BRANCH=`=git branch 2> /dev/null | grep '*' | sed 's/* //'`
@@ -204,16 +209,17 @@ PROMPT="$vimode$vimodesym$color_reset$exit_code_color$history_num $cur_time $pro
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/Users/narvanitis/opt/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/Users/narvanitis/opt/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/Users/narvanitis/opt/anaconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/Users/narvanitis/opt/anaconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
+# __conda_setup="$('/Users/narvanitis/opt/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+# if [ $? -eq 0 ]; then
+#     eval "$__conda_setup"
+# else
+#     if [ -f "/Users/narvanitis/opt/anaconda3/etc/profile.d/conda.sh" ]; then
+#         . "/Users/narvanitis/opt/anaconda3/etc/profile.d/conda.sh"
+#     else
+#         export PATH="/Users/narvanitis/opt/anaconda3/bin:$PATH"
+#     fi
+# fi
+# unset __conda_setup
 # <<< conda initialize <<<
 
+export PATH="/usr/local/opt/tcl-tk/bin:$PATH"
