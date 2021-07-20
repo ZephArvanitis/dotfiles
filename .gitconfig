@@ -1,6 +1,6 @@
 [user]
-	name  = Tasha Arvanitis
-	email = tasha.arvanitis@gmail.com
+	name  = Zeph Arvanitis
+	email = zeph@rescale.com
 [color]
 	ui = true
 [alias]
@@ -11,7 +11,7 @@
 	alias = ! git config --get-regexp ^alias\\. | sed -e s/^alias\\.// -e s/\\ /\\ =\\ /
 
 [core]
-	excludesfile = /Users/narvanitis/.gitignore_global
+	excludesfile = /Users/zeph/.gitignore_global
 	editor = vim
 	autocrlf = input
 [push]
