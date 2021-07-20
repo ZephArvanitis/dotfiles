@@ -1,12 +1,3 @@
-# DESRES-specific
-if [ $USER = "arvaniti" ]; then
-    alias io="inout | grep 'arvaniti\|hargus\|greisman\|klepeis\|donchev\|mcgibbon\|yuku'"
-    alias activate="source /u/en/arvaniti/env/bin/activate"
-    # Remap caps lock to escape
-    xmodmap -e "keycode 66 = Escape NoSymbol Escape"
-    xmodmap -e "clear lock"
-fi
-
 # GENERAL
 export PATH="/usr/local/bin:$PATH"
 export PATH="/usr/local/share/dotnet:$PATH"
@@ -42,7 +33,10 @@ export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
 export PATH="$(brew --prefix)/bin:$PATH"
 # Binutils (installed by hand)
 # export PATH=/usr/local/i386-elf/bin:$PATH
-alias ls='ls --color=auto'
+#                1 2 3 4 5 6 7 8 9 1011
+export LSCOLORS="ExGxbxbxCxegedabagacad"
+#                exfxcxdxbxegedabagacad
+alias ls='ls -G'
 # Color tab/^D completion like ls
 zstyle ':completion:*' list-colors "${(@s.:.)LS_COLORS}"
 autoload -Uz compinit
@@ -162,15 +156,18 @@ function working_dir {
 
     # If the unshortened directories are all of them, don't bother with the rest.
     if [[ `echo $DIRS | wc -l` -le $UNSHORTENED ]]; then
-        echo $UNSHORTENED_DIRS | head -c-1 | tr '\n' '/'
+        NBYTES=$(( $(echo $UNSHORTENED_DIRS | wc -c) - 1 ))
+        echo $UNSHORTENED_DIRS | head -c$NBYTES | tr '\n' '/'
         return
     fi
 
     # Get all pieces that need to be shortened.
-    SHORTENED_DIRS=`echo $DIRS | cut -c-$SHORT_LENGTH | head -n-$UNSHORTENED`
+    N_SHORTENED=$(( $(echo $DIRS | wc -l ) - $UNSHORTENED ))
+    SHORTENED_DIRS=`echo $DIRS | cut -c1-$SHORT_LENGTH | head -n$N_SHORTENED`
 
     # Print out the directory. Make sure not to include trailing /, which is why we cut off that newline using head.
-    (echo $SHORTENED_DIRS; echo $UNSHORTENED_DIRS | head -c-1) | tr '\n' '/'
+    NBYTES=$(( $(echo $UNSHORTENED_DIRS | wc -c) - 1 ))
+    (echo $SHORTENED_DIRS; echo $UNSHORTENED_DIRS | head -c$NBYTES) | tr '\n' '/'
 }
 prompt_cwd='$(working_dir)'
 
