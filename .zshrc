@@ -33,9 +33,7 @@ export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
 export PATH="$(brew --prefix)/bin:$PATH"
 # Binutils (installed by hand)
 # export PATH=/usr/local/i386-elf/bin:$PATH
-#                1 2 3 4 5 6 7 8 9 1011
 export LSCOLORS="ExGxbxbxCxegedabagacad"
-#                exfxcxdxbxegedabagacad
 alias ls='ls -G'
 # Color tab/^D completion like ls
 zstyle ':completion:*' list-colors "${(@s.:.)LS_COLORS}"
@@ -203,20 +201,13 @@ vimodesym='$(vimode_symbol)'
 # PROMPT="$exit_code_color$history_num $vimode$vimodesym$color_reset$exit_color $cur_time $prompt_user $prompt_cwd "'$(prompt_char)'" $color_reset"
 PROMPT="$vimode$vimodesym$color_reset$exit_code_color$history_num $cur_time $prompt_user $prompt_cwd"$'\n''$(prompt_char)'" $color_reset"
 
-
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-# __conda_setup="$('/Users/narvanitis/opt/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-# if [ $? -eq 0 ]; then
-#     eval "$__conda_setup"
-# else
-#     if [ -f "/Users/narvanitis/opt/anaconda3/etc/profile.d/conda.sh" ]; then
-#         . "/Users/narvanitis/opt/anaconda3/etc/profile.d/conda.sh"
-#     else
-#         export PATH="/Users/narvanitis/opt/anaconda3/bin:$PATH"
-#     fi
-# fi
-# unset __conda_setup
-# <<< conda initialize <<<
-
 export PATH="/usr/local/opt/tcl-tk/bin:$PATH"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# API keys stored in a separate file so I can version control this one.
+source .apikey_script
+
+export RESCALE_METADATA_BASE=/Users/zeph/code/rescale/rescale-platform-metadata
