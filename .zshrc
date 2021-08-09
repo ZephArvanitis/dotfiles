@@ -208,6 +208,6 @@ export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # API keys stored in a separate file so I can version control this one.
-source .apikey_script
+source ~/.apikey_script
 
 export RESCALE_METADATA_BASE=/Users/zeph/code/rescale/rescale-platform-metadata
