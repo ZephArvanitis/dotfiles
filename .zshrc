@@ -45,8 +45,7 @@ export PATH="$(brew --prefix)/bin:$PATH"
 alias ls='ls --color=auto'
 # Color tab/^D completion like ls
 zstyle ':completion:*' list-colors "${(@s.:.)LS_COLORS}"
-autoload -Uz compinit
-compinit
+
 # Enable autocompletion inside git repositories
 fpath=(~/.zsh $fpath)
 autoload -Uz compinit && compinit

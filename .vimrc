@@ -74,9 +74,10 @@ Plug 'rust-lang/rust.vim'
 " Markdown
 Plug 'plasticboy/vim-markdown' " Not sure this is needed??
 " js/react files
-Plug 'yuezk/vim-js'
-Plug 'HerringtonDarkholme/yats.vim'
-Plug 'maxmellon/vim-jsx-pretty'
+" Plug 'yuezk/vim-js'
+" Plug 'HerringtonDarkholme/yats.vim'
+" Plug 'maxmellon/vim-jsx-pretty'
+Plug 'pangloss/vim-javascript'
 " Python
 Plug 'jeetsukumaran/vim-pythonsense'
 Plug 'python-mode/python-mode', { 'for': 'python', 'branch': 'develop' }
@@ -178,10 +179,15 @@ let g:lightline = {'colorscheme': 'wombat'}
 " Enable js/typescript highlighting in tsx files
 au BufRead,BufNewFile *.tsx set syntax=javascript
 " Frontend development
-au BufNewFile,BufRead *.js, *.html, *.css, *.ts, *.tsx
-    \ set tabstop=2
-    \ set softtabstop=2
-    \ set shiftwidth=2
+" au BufNewFile,BufRead *.js,*.html,*.css,*.ts,*.tsx
+"     \ set tabstop=2
+"     \ set softtabstop=2
+"     \ set shiftwidth=2
+autocmd FileType javascript setlocal shiftwidth=2 tabstop=2
+autocmd FileType html setlocal shiftwidth=2 tabstop=2
+autocmd FileType css setlocal shiftwidth=2 tabstop=2
+autocmd FileType ts setlocal shiftwidth=2 tabstop=2
+autocmd FileType tsx setlocal shiftwidth=2 tabstop=2
 
 " Enable mpr syntax highlighting
 au BufRead,BufNewFile *.mpr set syntax=mpr
