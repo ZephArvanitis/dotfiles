@@ -211,3 +211,5 @@ export NVM_DIR="$HOME/.nvm"
 source ~/.apikey_script
 
 export RESCALE_METADATA_BASE=/Users/zeph/code/rescale/rescale-platform-metadata
+
+export PATH="$HOME/.poetry/bin:$PATH"
