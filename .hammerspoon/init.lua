@@ -118,46 +118,20 @@ end)
 -- hs.hotkey.bind({"alt", "cmd"}, "L", keyStrokes("console.log("))
 
 -- Focus applications
-hs.hotkey.bind({"alt"}, "T", function()
-  hs.application.launchOrFocus("iTerm")
-end)
+function bindKeyToApplication(key, applicationName)
+    hs.hotkey.bind({"alt"}, key, function()
+        hs.application.launchOrFocus(applicationName)
+    end)
+end
 
-hs.hotkey.bind({"alt"}, "G", function()
-  hs.application.launchOrFocus("Safari")
-end)
-
-hs.hotkey.bind({"alt"}, "O", function()
-  hs.application.launchOrFocus("Zoom.us")
-end)
-
-hs.hotkey.bind({"alt"}, "Z", function()
-  hs.application.launchOrFocus("Zendesk")
-end)
-
-hs.hotkey.bind({"alt"}, "H", function()
-  hs.application.launchOrFocus("Google Chrome")
-end)
-
-hs.hotkey.bind({"alt"}, "L", function()
-  hs.application.launchOrFocus("Google Calendar")
-end)
-
-hs.hotkey.bind({"alt"}, "K", function()
-  hs.application.launchOrFocus("Slack")
-end)
-
-hs.hotkey.bind({"alt"}, "W", function()
-  hs.application.launchOrFocus("/Applications/TiddlyDesktop.app")
-end)
-
-hs.hotkey.bind({"alt"}, "N", function()
-  hs.application.launchOrFocus("Asana")
-end)
-
-hs.hotkey.bind({"alt"}, "V", function()
-  hs.application.launchOrFocus("DCV Viewer")
-end)
-
-hs.hotkey.bind({"alt"}, "1", function()
-  hs.application.launchOrFocus("1Password 7")
-end)
+bindKeyToApplication("T", "iTerm")
+bindKeyToApplication("G", "Safari")
+bindKeyToApplication("H", "Google Chrome")
+bindKeyToApplication("O", "Zoom.us")
+bindKeyToApplication("Z", "Zendesk")
+bindKeyToApplication("L", "Google Calendar")
+bindKeyToApplication("K", "Slack")
+bindKeyToApplication("W", "/Applications/TiddlyDesktop.app")
+bindKeyToApplication("N", "Asana")
+bindKeyToApplication("V", "DCV Viewer")
+bindKeyToApplication("1", "1Password 7")
