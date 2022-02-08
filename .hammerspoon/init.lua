@@ -4,6 +4,179 @@ hs.hotkey.bind({"alt"}, "R", function()
   hs.reload()
 end)
 
+-- Focus the last used window.
+local function focusLastFocused()
+    local wf = hs.window.filter
+    local lastFocused = wf.defaultCurrentSpace:getWindows(wf.sortByFocusedLast)
+    if #lastFocused > 0 then lastFocused[1]:focus() end
+end
+
+-- Emoji chooser
+-- taken verbatim from https://aldur.github.io/articles/hammerspoon-emojis/
+-- thank you!
+--
+-- NOTE: depends upon a directory of emojis, which can be obtained by unzipping
+-- the file here: https://aldur.github.io/articles/hammerspoon-emojis/
+local emoji_choices = {}
+for _, emoji in ipairs(hs.json.decode(io.open("emojis/emojis.json"):read())) do
+    table.insert(emoji_choices,
+        {text=emoji['name'],
+            subText=table.concat(emoji['kwds'], ", "),
+            image=hs.image.imageFromPath("emojis/" .. emoji['id'] .. ".png"),
+            chars=emoji['chars']
+        })
+end
+
+-- Create the emojiChooser.
+-- On selection, copy the emoji and type it into the focused application.
+local emojiChooser = hs.chooser.new(function(choice)
+    if not choice then focusLastFocused(); return end
+    hs.pasteboard.setContents(choice["chars"])
+    focusLastFocused()
+    hs.eventtap.keyStrokes(hs.pasteboard.getContents())
+end)
+
+emojiChooser:searchSubText(true)
+emojiChooser:choices(emoji_choices)
+
+emojiChooser:rows(5)
+emojiChooser:bgDark(true)
+
+hs.hotkey.bind({"cmd", "alt"}, "E", function() emojiChooser:show() end)
+
+-- shortcut chooser
+-- First, remove newlines in the editable file.
+os.execute("tr -d '\n' < ~/.hammerspoon/shortcuts.json > ~/.hammerspoon/.shortcuts.json")
+local shortcutChoices = {}
+for _, shortcut in ipairs(hs.json.decode(io.open(".shortcuts.json"):read())) do
+    table.insert(shortcutChoices,
+        {text=shortcut['name'],
+            subText=table.concat(shortcut['kwds'], ", "),
+            page=shortcut['page'],
+            application=shortcut['application']
+        })
+end
+
+-- from https://stackoverflow.com/a/11671820, thank you!
+function map(tbl, f)
+    local t = {}
+    for k,v in pairs(tbl) do
+        t[k] = f(v)
+    end
+    return t
+end
+
+-- from https://stackoverflow.com/a/641993, thank you!
+function shallow_copy(t)
+  local t2 = {}
+  for k,v in pairs(t) do
+    t2[k] = v
+  end
+  return t2
+end
+
+
+-- adapted from https://www.reddit.com/r/lua/comments/lccolr/comment/glzhd0u/, thank you!
+local function any(t)
+    for _, v in pairs(t) do
+        if v then return true end
+    end
+
+    return false
+end
+
+-- Create the shortcutChooser.
+-- On selection, copy the emoji and type it into the focused application.
+local shortcutChooser = hs.chooser.new(function(choice)
+    if not choice then focusLastFocused(); return end
+    local url = choice["page"]
+    local app = choice["application"]
+    local oldClipboard = hs.pasteboard.getContents()
+    hs.pasteboard.setContents(url)
+    hs.application.launchOrFocus(app)
+    -- new tab, fairly cross-browser
+    hs.eventtap.keyStroke({"cmd"}, "T")
+    -- paste (much faster than using keyStrokes with a long string)
+    hs.eventtap.keyStroke({"cmd"}, "V")
+    hs.eventtap.keyStroke({}, "return")
+    -- reset old clipboard
+    hs.pasteboard.setContents(oldClipboard)
+end)
+shortcutChooser:queryChangedCallback(function()
+    -- adapted from:
+    -- https://github.com/Hammerspoon/hammerspoon/issues/782#issuecomment-224086987
+    -- this appears to get the updated query each time it's called, hooray!
+    local query = shortcutChooser:query()
+    if query == '' then
+        shortcutChooser:choices(shortcutChoices)
+    else
+        local choices = {}
+
+        -- local queries = ss.u.strSplit(query, ' ')
+
+        for _, aChoice in pairs(shortcutChoices) do
+            -- aChoice.rank = getRank(queries, aChoice)
+            -- if aChoice.rank > 0 then
+            -- end
+            if string.match(aChoice["text"], query) then
+                table.insert(choices, aChoice)
+                -- choices[#choices+1] = aChoice
+            end
+        end
+
+        -- table.sort(choices, choiceSort)
+
+        -- add commands last, after sorting
+        -- for _, aCommand in ipairs(commands) do
+        --     local filter = commandFilters[aCommand.command]
+        --     if filter ~= nil and filter() then
+        --     choices[#choices+1] = aCommand
+        --     end
+        -- end
+
+        shortcutChooser:choices(choices)
+    end
+
+    -- local currentQuery = shorcutChooser:query()
+    -- hs.alert(currentQuery)
+
+    -- local currentQueryTable = {
+    --     {
+    --         ["text"] = currentQuery
+    --     },
+    -- }
+
+    -- for i=1, #shortcutChoices do
+    --     local choice = shortcutChoices[i]
+    --     hs.alert(choice)
+    --     -- we want to check the full query against both the text and the
+    --     -- kwds for this choice
+    --     -- local compare_againsts = shallow_copy(choice["kwds"])
+    --     -- table.insert(compare_againsts, choice["name"])
+    --     -- local comparisons = map(compare_againsts, function (compare_to)
+    --     --     return string.match(compare_to, query)
+    --     -- end)
+    --     -- if any(comparisons) then
+    --     --     table.insert(currentQueryTable, shortcutChoices[i])
+    --     -- end
+    -- end
+
+    -- mod.noteChooser:choices(currentQueryTable)
+    -- return
+end)
+
+
+shortcutChooser:searchSubText(true)
+shortcutChooser:choices(shortcutChoices)
+
+shortcutChooser:rows(5)
+shortcutChooser:bgDark(true)
+
+hs.hotkey.bind({"cmd", "alt"}, "S", function()
+    shortcutChooser:show()
+end)
+
+
 -- Move a zendesk ticket from a browser to the zendesk "application"
 
 -- Let's do some application-specific stuff
@@ -50,6 +223,15 @@ end
 --     hs.alert('cmd')
 --     -- hs.eventtap.keyStroke({"alt", "cmd"}, "F")
 -- end)
+--
+hs.hotkey.bind({"cmd","alt"}, "J", nil, function()
+    hs.alert('rawr')
+    testCallbackFn = function(result) print("Callback Result: " .. result) end
+    hs.dialog.textPrompt("Main message.", "Please enter something:")
+    hs.dialog.alert(100, 100, testCallbackFn, "Message", "Informative Text", "Button One", "Button Two", "NSCriticalAlertStyle")
+    hs.dialog.alert(200, 200, testCallbackFn, "Message", "Informative Text", "Single Button")
+    hs.alert('rawr2')
+end)
 
 function applicationWatcher(appName, eventType, appObject)
     if (appName == "Safari" or appName == "Google Chrome") then
@@ -124,14 +306,30 @@ function bindKeyToApplication(key, applicationName)
     end)
 end
 
-bindKeyToApplication("T", "iTerm")
+bindKeyToApplication("1", "1Password 7")
+-- A is reserved for screen placement
+
+bindKeyToApplication("C", "Zendesk Chat")
+-- D is reserved for screen placement
+
+
 bindKeyToApplication("G", "Safari")
 bindKeyToApplication("H", "Google Chrome")
-bindKeyToApplication("O", "Zoom.us")
-bindKeyToApplication("Z", "Zendesk")
-bindKeyToApplication("L", "Google Calendar")
+
+
 bindKeyToApplication("K", "Slack")
-bindKeyToApplication("W", "/Applications/TiddlyDesktop.app")
+bindKeyToApplication("L", "Google Calendar")
+
 bindKeyToApplication("N", "Asana")
-bindKeyToApplication("V", "DCV Viewer")
-bindKeyToApplication("1", "1Password 7")
+bindKeyToApplication("O", "Zoom.us")
+
+
+-- R is reserved for refreshing hammerspoon
+
+bindKeyToApplication("T", "iTerm")
+
+bindKeyToApplication("V", "Visual Studio Code")
+bindKeyToApplication("W", "/Applications/TiddlyDesktop.app")
+-- X is reserved for screen placement
+
+bindKeyToApplication("Z", "Zendesk")
