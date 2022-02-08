@@ -105,9 +105,11 @@ end)
 shortcutChooser:queryChangedCallback(function()
     -- adapted from:
     -- https://github.com/Hammerspoon/hammerspoon/issues/782#issuecomment-224086987
+
     -- this appears to get the updated query each time it's called, hooray!
     local query = shortcutChooser:query()
     if query == '' then
+        -- fully populated list if no query (this is speedy)
         shortcutChooser:choices(shortcutChoices)
     else
         local choices = {}
@@ -115,12 +117,10 @@ shortcutChooser:queryChangedCallback(function()
         -- local queries = ss.u.strSplit(query, ' ')
 
         for _, aChoice in pairs(shortcutChoices) do
-            -- aChoice.rank = getRank(queries, aChoice)
-            -- if aChoice.rank > 0 then
-            -- end
-            if string.match(aChoice["text"], query) then
+            -- for hits in general, check query against text and kwds
+            local check_str = aChoice["text"]..", "..aChoice["subText"]
+            if string.match(check_str, query) then
                 table.insert(choices, aChoice)
-                -- choices[#choices+1] = aChoice
             end
         end
 
@@ -136,33 +136,6 @@ shortcutChooser:queryChangedCallback(function()
 
         shortcutChooser:choices(choices)
     end
-
-    -- local currentQuery = shorcutChooser:query()
-    -- hs.alert(currentQuery)
-
-    -- local currentQueryTable = {
-    --     {
-    --         ["text"] = currentQuery
-    --     },
-    -- }
-
-    -- for i=1, #shortcutChoices do
-    --     local choice = shortcutChoices[i]
-    --     hs.alert(choice)
-    --     -- we want to check the full query against both the text and the
-    --     -- kwds for this choice
-    --     -- local compare_againsts = shallow_copy(choice["kwds"])
-    --     -- table.insert(compare_againsts, choice["name"])
-    --     -- local comparisons = map(compare_againsts, function (compare_to)
-    --     --     return string.match(compare_to, query)
-    --     -- end)
-    --     -- if any(comparisons) then
-    --     --     table.insert(currentQueryTable, shortcutChoices[i])
-    --     -- end
-    -- end
-
-    -- mod.noteChooser:choices(currentQueryTable)
-    -- return
 end)
 
 
