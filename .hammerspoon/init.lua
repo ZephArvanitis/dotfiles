@@ -97,11 +97,22 @@ end
 
 -- Create the shortcutChooser.
 -- On selection, copy the emoji and type it into the focused application.
-local shortcutChooser = hs.chooser.new(function(choice)
+local shortcutChooser = nil
+shortcutChooser = hs.chooser.new(function(choice)
     if not choice then focusLastFocused(); return end
+    local query = string.lower(shortcutChooser:query())
+
+    local uses_querystring = choice["querystring"] ~= nil
     local url = choice["page"]
     local app = choice["application"]
+
     local oldClipboard = hs.pasteboard.getContents()
+    if uses_querystring then
+        local query_words = split(query, ' ')
+        table.remove(query_words, 1)
+        local querystring = table.concat(query_words, ' ')
+        url = url:gsub("%%s", querystring)
+    end
     hs.pasteboard.setContents(url)
     hs.application.launchOrFocus(app)
     -- new tab, fairly cross-browser
@@ -133,9 +144,12 @@ shortcutChooser:queryChangedCallback(function()
             local check_str = aChoice["text"]..", "..aChoice["subText"]
             check_str = string.lower(check_str)
             local matches_at_all = string.match(check_str, query)
+
             -- additionally, match those with querystring=True iff the
             -- first *word* of the query matches one of the kwds for the
-            -- choice.
+            -- choice. (Luckily based on the wrapping if statement here we
+            -- can always assume we have at least one character, so no null
+            -- strings)
             local matches_querystring = string.match(aChoice["subText"], first_query_word) and aChoice["querystring"] ~= nil
             if matches_at_all or matches_querystring then
                 table.insert(choices, aChoice)
