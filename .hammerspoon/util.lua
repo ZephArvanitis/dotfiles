@@ -1,3 +1,6 @@
+-- A collection of utility functions. Properly speaking these should form a
+-- module, but for now I'm okay with declaring global things at top level
+
 -- from https://stackoverflow.com/a/27028488 thank you
 function dump(o)
     if type(o) == 'table' then
@@ -32,7 +35,7 @@ end
 
 
 -- adapted from https://www.reddit.com/r/lua/comments/lccolr/comment/glzhd0u/, thank you!
-local function any(t)
+function any(t)
     for _, v in pairs(t) do
         if v then return true end
     end
@@ -41,11 +44,10 @@ local function any(t)
 end
 
 -- from https://www.codegrepper.com/code-examples/lua/lua+split+string+by+space, thank you!
-local function split(s, delimiter)
+function split(s, delimiter)
     result = {};
     for match in (s..delimiter):gmatch("(.-)"..delimiter) do
         table.insert(result, match);
     end
     return result;
 end
-
