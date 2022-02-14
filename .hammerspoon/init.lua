@@ -113,7 +113,11 @@ shortcutChooser:queryChangedCallback(function()
     -- https://github.com/Hammerspoon/hammerspoon/issues/782#issuecomment-224086987
 
     -- this appears to get the updated query each time it's called, hooray!
+    -- make this case-insensitive search
     local query = string.lower(shortcutChooser:query())
+    -- and escape any special chars (comes up most often for `-`)
+    -- TODO: figure out how to escape special chars in general
+    query = query:gsub("%-", "%%-")
     if query == '' then
         -- fully populated list if no query (this is speedy)
         shortcutChooser:choices(shortcutChoices)
