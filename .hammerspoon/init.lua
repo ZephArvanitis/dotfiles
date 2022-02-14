@@ -4,6 +4,8 @@ hs.hotkey.bind({"alt"}, "R", function()
   hs.reload()
 end)
 
+require("util")
+
 -- Focus the last used window.
 local function focusLastFocused()
     local wf = hs.window.filter
@@ -47,6 +49,7 @@ hs.hotkey.bind({"cmd", "alt"}, "E", function() emojiChooser:show() end)
 -- shortcut chooser
 -- First, remove newlines in the editable file.
 os.execute("tr -d '\n' < ~/.hammerspoon/shortcuts.json > ~/.hammerspoon/.shortcuts.json")
+os.execute("tr -d '\n' < ~/.hammerspoon/platform-shortcuts.json > ~/.hammerspoon/.platform-shortcuts.json")
 local shortcutChoices = {}
 for _, shortcut in ipairs(hs.json.decode(io.open(".shortcuts.json"):read())) do
     table.insert(shortcutChoices,
@@ -57,46 +60,28 @@ for _, shortcut in ipairs(hs.json.decode(io.open(".shortcuts.json"):read())) do
             querystring=shortcut['querystring']
         })
 end
-
--- from https://stackoverflow.com/a/11671820, thank you!
-function map(tbl, f)
-    local t = {}
-    for k,v in pairs(tbl) do
-        t[k] = f(v)
+local platforms = {
+    ["PROD"] = "https://platform.rescale.com",
+    ["ITAR"] = "https://itar.rescale.com",
+    ["EU"] = "https://eu.rescale.com",
+    ["KR"] = "https://kr.rescale.com",
+    ["JP"] = "https://platform.rescale.jp",
+    ["ST"] = "https://platform-stage.rescale.com",
+    ["DEV"] = "https://platform-dev.rescale.com"
+}
+for _, shortcut in ipairs(hs.json.decode(io.open(".platform-shortcuts.json"):read())) do
+    for platformName, baseurl in pairs(platforms) do
+        table.insert(shortcutChoices,
+            {text=platformName..' '..shortcut['name'],
+                subText=table.concat(map(shortcut['kwds'], function (kwd) return string.lower(platformName)..kwd end), ", "),
+                page=baseurl..shortcut['page'],
+                application=shortcut['application'],
+                querystring=shortcut['querystring']
+            })
     end
-    return t
-end
-
--- from https://stackoverflow.com/a/641993, thank you!
-function shallow_copy(t)
-  local t2 = {}
-  for k,v in pairs(t) do
-    t2[k] = v
-  end
-  return t2
-end
-
-
--- adapted from https://www.reddit.com/r/lua/comments/lccolr/comment/glzhd0u/, thank you!
-local function any(t)
-    for _, v in pairs(t) do
-        if v then return true end
-    end
-
-    return false
-end
-
--- from https://www.codegrepper.com/code-examples/lua/lua+split+string+by+space, thank you!
-local function split(s, delimiter)
-    result = {};
-    for match in (s..delimiter):gmatch("(.-)"..delimiter) do
-        table.insert(result, match);
-    end
-    return result;
 end
 
 -- Create the shortcutChooser.
--- On selection, copy the emoji and type it into the focused application.
 local shortcutChooser = nil
 shortcutChooser = hs.chooser.new(function(choice)
     if not choice then focusLastFocused(); return end
