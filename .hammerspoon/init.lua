@@ -57,7 +57,8 @@ for _, shortcut in ipairs(hs.json.decode(io.open(".shortcuts.json"):read())) do
             subText=table.concat(shortcut['kwds'], ", "),
             page=shortcut['page'],
             application=shortcut['application'],
-            querystring=shortcut['querystring']
+            querystring=shortcut['querystring'],
+            acceptsIDs=shortcut['acceptsIDs']
         })
 end
 local platforms = {
@@ -76,7 +77,8 @@ for _, shortcut in ipairs(hs.json.decode(io.open(".platform-shortcuts.json"):rea
                 subText=table.concat(map(shortcut['kwds'], function (kwd) return string.lower(platformName)..kwd end), ", "),
                 page=baseurl..shortcut['page'],
                 application=shortcut['application'],
-                querystring=shortcut['querystring']
+                querystring=shortcut['querystring'],
+                acceptsIDs=shortcut['acceptsIDs']
             })
     end
 end
@@ -85,19 +87,24 @@ end
 local shortcutChooser = nil
 shortcutChooser = hs.chooser.new(function(choice)
     if not choice then focusLastFocused(); return end
-    local query = string.lower(shortcutChooser:query())
+    -- local query = string.lower(shortcutChooser:query())
+    local query = shortcutChooser:query()
 
     local uses_querystring = choice["querystring"] ~= nil
+    local acceptsIDs = choice["acceptsIDs"] ~= nil
     local url = choice["page"]
     local app = choice["application"]
 
-    local oldClipboard = hs.pasteboard.getContents()
     if uses_querystring then
         local query_words = split(query, ' ')
         table.remove(query_words, 1)
         local querystring = table.concat(query_words, ' ')
+        if acceptsIDs and isExternalID(querystring) then
+            querystring = string.format("%.0f", decode(querystring))
+        end
         url = url:gsub("%%s", querystring)
     end
+    local oldClipboard = hs.pasteboard.getContents()
     hs.pasteboard.setContents(url)
     hs.application.launchOrFocus(app)
     -- new tab, fairly cross-browser
@@ -156,7 +163,7 @@ shortcutChooser:choices(shortcutChoices)
 shortcutChooser:rows(5)
 shortcutChooser:bgDark(true)
 
-hs.hotkey.bind({"cmd", "alt"}, "S", function()
+hs.hotkey.bind({"alt"}, "J", function()
     shortcutChooser:show()
 end)
 
@@ -210,11 +217,6 @@ end
 --
 hs.hotkey.bind({"cmd","alt"}, "J", nil, function()
     hs.alert('rawr')
-    testCallbackFn = function(result) print("Callback Result: " .. result) end
-    hs.dialog.textPrompt("Main message.", "Please enter something:")
-    hs.dialog.alert(100, 100, testCallbackFn, "Message", "Informative Text", "Button One", "Button Two", "NSCriticalAlertStyle")
-    hs.dialog.alert(200, 200, testCallbackFn, "Message", "Informative Text", "Single Button")
-    hs.alert('rawr2')
 end)
 
 function applicationWatcher(appName, eventType, appObject)
