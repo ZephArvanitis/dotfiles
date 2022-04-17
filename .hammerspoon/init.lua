@@ -5,6 +5,7 @@ hs.hotkey.bind({"alt"}, "R", function()
 end)
 
 require("util")
+require("shortcutjumper")
 
 -- Focus the last used window.
 local function focusLastFocused()
@@ -45,123 +46,6 @@ emojiChooser:rows(5)
 emojiChooser:bgDark(true)
 
 hs.hotkey.bind({"cmd", "alt"}, "E", function() emojiChooser:show() end)
-
--- shortcut chooser
--- First, remove newlines in the editable file.
-os.execute("tr -d '\n' < ~/.hammerspoon/shortcuts.json > ~/.hammerspoon/.shortcuts.json")
-os.execute("tr -d '\n' < ~/.hammerspoon/platform-shortcuts.json > ~/.hammerspoon/.platform-shortcuts.json")
-local shortcutChoices = {}
-for _, shortcut in ipairs(hs.json.decode(io.open(".shortcuts.json"):read())) do
-    table.insert(shortcutChoices,
-        {text=shortcut['name'],
-            subText=table.concat(shortcut['kwds'], ", "),
-            page=shortcut['page'],
-            application=shortcut['application'],
-            querystring=shortcut['querystring'],
-            acceptsIDs=shortcut['acceptsIDs']
-        })
-end
-local platforms = {
-    ["PROD"] = "https://platform.rescale.com",
-    ["ITAR"] = "https://itar.rescale.com",
-    ["EU"] = "https://eu.rescale.com",
-    ["KR"] = "https://kr.rescale.com",
-    ["JP"] = "https://platform.rescale.jp",
-    ["ST"] = "https://platform-stage.rescale.com",
-    ["DEV"] = "https://platform-dev.rescale.com"
-}
-for _, shortcut in ipairs(hs.json.decode(io.open(".platform-shortcuts.json"):read())) do
-    for platformName, baseurl in pairs(platforms) do
-        table.insert(shortcutChoices,
-            {text=platformName..' '..shortcut['name'],
-                subText=table.concat(map(shortcut['kwds'], function (kwd) return string.lower(platformName)..kwd end), ", "),
-                page=baseurl..shortcut['page'],
-                application=shortcut['application'],
-                querystring=shortcut['querystring'],
-                acceptsIDs=shortcut['acceptsIDs']
-            })
-    end
-end
-
--- Create the shortcutChooser.
-local shortcutChooser = nil
-shortcutChooser = hs.chooser.new(function(choice)
-    if not choice then focusLastFocused(); return end
-    -- local query = string.lower(shortcutChooser:query())
-    local query = shortcutChooser:query()
-
-    local uses_querystring = choice["querystring"] ~= nil
-    local acceptsIDs = choice["acceptsIDs"] ~= nil
-    local url = choice["page"]
-    local app = choice["application"]
-
-    if uses_querystring then
-        local query_words = split(query, ' ')
-        table.remove(query_words, 1)
-        local querystring = table.concat(query_words, ' ')
-        if acceptsIDs and isExternalID(querystring) then
-            querystring = string.format("%.0f", decode(querystring))
-        end
-        url = url:gsub("%%s", querystring)
-    end
-    local oldClipboard = hs.pasteboard.getContents()
-    hs.pasteboard.setContents(url)
-    hs.application.launchOrFocus(app)
-    -- new tab, fairly cross-browser
-    hs.eventtap.keyStroke({"cmd"}, "T")
-    -- paste (much faster than using keyStrokes with a long string)
-    hs.eventtap.keyStroke({"cmd"}, "V")
-    hs.eventtap.keyStroke({}, "return")
-    -- reset old clipboard
-    hs.pasteboard.setContents(oldClipboard)
-end)
-shortcutChooser:queryChangedCallback(function()
-    -- adapted from:
-    -- https://github.com/Hammerspoon/hammerspoon/issues/782#issuecomment-224086987
-
-    -- this appears to get the updated query each time it's called, hooray!
-    -- make this case-insensitive search
-    local query = string.lower(shortcutChooser:query())
-    -- and escape any special chars (comes up most often for `-`)
-    -- TODO: figure out how to escape special chars in general
-    query = query:gsub("%-", "%%-")
-    if query == '' then
-        -- fully populated list if no query (this is speedy)
-        shortcutChooser:choices(shortcutChoices)
-    else
-        local choices = {}
-        -- remember, lua uses one-indexing :sadpanda:
-        local first_query_word = split(query, ' ')[1]
-
-        -- local queries = ss.u.strSplit(query, ' ')
-
-        for _, aChoice in pairs(shortcutChoices) do
-            -- for hits in general, check query against text and kwds
-            local check_str = aChoice["text"]..", "..aChoice["subText"]
-            check_str = string.lower(check_str)
-            local matches_at_all = string.match(check_str, query)
-
-            -- additionally, match those with querystring=True iff the
-            -- first *word* of the query matches one of the kwds for the
-            -- choice. (Luckily based on the wrapping if statement here we
-            -- can always assume we have at least one character, so no null
-            -- strings)
-            local matches_querystring = string.match(aChoice["subText"], first_query_word) and aChoice["querystring"] ~= nil
-            if matches_at_all or matches_querystring then
-                table.insert(choices, aChoice)
-            end
-        end
-
-        shortcutChooser:choices(choices)
-    end
-end)
-
-
-shortcutChooser:searchSubText(true)
-shortcutChooser:choices(shortcutChoices)
-
-shortcutChooser:rows(5)
-shortcutChooser:bgDark(true)
 
 hs.hotkey.bind({"alt"}, "J", function()
     shortcutChooser:show()
@@ -298,11 +182,11 @@ bindKeyToApplication("1", "1Password 7")
 bindKeyToApplication("C", "Zendesk Chat")
 -- D is reserved for screen placement
 
-
+bindKeyToApplication("F", "Figma")
 bindKeyToApplication("G", "Safari")
 bindKeyToApplication("H", "Google Chrome")
 
-
+-- J is reserved for the shortcut jumper
 bindKeyToApplication("K", "Slack")
 bindKeyToApplication("L", "Google Calendar")
 
