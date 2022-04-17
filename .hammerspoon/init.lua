@@ -72,6 +72,13 @@ local function focusLastFocused()
     local lastFocused = wf.defaultCurrentSpace:getWindows(wf.sortByFocusedLast)
     if #lastFocused > 0 then lastFocused[1]:focus() end
 end
+
+-- Shortcut jumper
+require("shortcutjumper")
+hs.hotkey.bind({"alt"}, "J", function()
+    shortcutChooser.show()
+end)
+
 -- Emoji chooser
 -- taken verbatim from https://aldur.github.io/articles/hammerspoon-emojis/
 -- thank you!
@@ -133,7 +140,7 @@ bindKeyToApplication("1", "1Password 7")
 bindKeyToApplication("G", "Safari")
 bindKeyToApplication("H", "Google Chrome")
 
-
+-- J reserved for shortcut jumper
 
 bindKeyToApplication("L", "Calendar")
 
