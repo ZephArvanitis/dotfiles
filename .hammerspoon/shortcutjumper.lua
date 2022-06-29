@@ -111,7 +111,8 @@ local platforms = {
     ["KR"] = "https://kr.rescale.com",
     ["JP"] = "https://platform.rescale.jp",
     ["ST"] = "https://platform-stage.rescale.com",
-    ["DEV"] = "https://platform-dev.rescale.com"
+    ["DEV"] = "https://platform-dev.rescale.com",
+    ["GOVST"] = "https://itar-staging.rescale.com"
 }
 for _, shortcut in ipairs(hs.json.decode(io.open(".platform-shortcuts.json"):read())) do
     for platformName, baseurl in pairs(platforms) do
