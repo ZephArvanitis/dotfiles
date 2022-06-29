@@ -112,14 +112,20 @@ local platforms = {
     ["JP"] = "https://platform.rescale.jp",
     ["ST"] = "https://platform-stage.rescale.com",
     ["DEV"] = "https://platform-dev.rescale.com",
-    ["GOVST"] = "https://itar-staging.rescale.com"
+    ["GOVST"] = "https://itar-staging.rescale.com",
+    ["ALLPR"] = "https://kr.rescale.com;https://platform.rescale.jp;https://platform.rescale.com;https://itar.rescale.com;https://eu.rescale.com"
 }
 for _, shortcut in ipairs(hs.json.decode(io.open(".platform-shortcuts.json"):read())) do
     for platformName, baseurl in pairs(platforms) do
+        shortcut_url_unescaped = shortcut['page']
+        -- for some reason shortcut_url:gsub doesn't work here, but
+        -- string.gsub does
+        shortcut_url = string.gsub(shortcut_url_unescaped, '%%', '%%%%')
         table.insert(shortcutChoices,
             {text=platformName..' '..shortcut['name'],
                 subText=table.concat(map(shortcut['kwds'], function (kwd) return string.lower(platformName)..kwd end), ", "),
-                page=baseurl..shortcut['page'],
+                -- account for multi-url platforms like allprods
+                page=string.gsub(baseurl, ';', shortcut_url .. ';') .. shortcut_url_unescaped,
                 application=shortcut['application'],
                 querystring=shortcut['querystring'],
                 acceptsIDs=shortcut['acceptsIDs']
@@ -166,7 +172,6 @@ shortcutChooser = hs.chooser.new(function(choice)
     -- if multiurl
     local urls = split(url, ';')
     for i, url in pairs(urls) do
-        hs.alert(url)
         openURL(uses_querystring, acceptsIDs, url, app, query)
     end
 
