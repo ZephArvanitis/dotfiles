@@ -127,18 +127,7 @@ for _, shortcut in ipairs(hs.json.decode(io.open(".platform-shortcuts.json"):rea
     end
 end
 
--- Create the shortcutChooser.
-shortcutChooser = nil
-shortcutChooser = hs.chooser.new(function(choice)
-    if not choice then focusLastFocused(); return end
-    -- local query = string.lower(shortcutChooser:query())
-    local query = shortcutChooser:query()
-
-    local uses_querystring = choice["querystring"] ~= nil
-    local acceptsIDs = choice["acceptsIDs"] ~= nil
-    local url = choice["page"]
-    local app = choice["application"]
-
+function openURL(uses_querystring, acceptsIDs, url, app, query)
     if uses_querystring then
         local query_words = split(query, ' ')
         table.remove(query_words, 1)
@@ -158,6 +147,29 @@ shortcutChooser = hs.chooser.new(function(choice)
     hs.eventtap.keyStroke({}, "return")
     -- reset old clipboard
     hs.pasteboard.setContents(oldClipboard)
+end
+
+-- Create the shortcutChooser.
+shortcutChooser = nil
+shortcutChooser = hs.chooser.new(function(choice)
+    if not choice then focusLastFocused(); return end
+    -- local query = string.lower(shortcutChooser:query())
+    local query = shortcutChooser:query()
+
+    local uses_querystring = choice["querystring"] ~= nil
+    local acceptsIDs = choice["acceptsIDs"] ~= nil
+    local url = choice["page"]
+    local app = choice["application"]
+
+    -- handle multi-url situations
+    -- multiurl = string.find(word, ";", true) ~= nil
+    -- if multiurl
+    local urls = split(url, ';')
+    for i, url in pairs(urls) do
+        hs.alert(url)
+        openURL(uses_querystring, acceptsIDs, url, app, query)
+    end
+
 end)
 shortcutChooser:queryChangedCallback(function()
     -- adapted from:
