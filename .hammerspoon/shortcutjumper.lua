@@ -133,11 +133,8 @@ for _, shortcut in ipairs(hs.json.decode(io.open(".platform-shortcuts.json"):rea
     end
 end
 
-function openURL(uses_querystring, acceptsIDs, url, app, query)
+function openURL(uses_querystring, acceptsIDs, url, app, querystring)
     if uses_querystring then
-        local query_words = split(query, ' ')
-        table.remove(query_words, 1)
-        local querystring = table.concat(query_words, ' ')
         if acceptsIDs and isExternalID(querystring) then
             querystring = string.format("%.0f", decode(querystring))
         end
@@ -160,7 +157,7 @@ shortcutChooser = nil
 shortcutChooser = hs.chooser.new(function(choice)
     if not choice then focusLastFocused(); return end
     -- local query = string.lower(shortcutChooser:query())
-    local query = shortcutChooser:query()
+    local full_query = shortcutChooser:query()
 
     local uses_querystring = choice["querystring"] ~= nil
     local acceptsIDs = choice["acceptsIDs"] ~= nil
@@ -171,8 +168,18 @@ shortcutChooser = hs.chooser.new(function(choice)
     -- multiurl = string.find(word, ";", true) ~= nil
     -- if multiurl
     local urls = split(url, ';')
+    local queries = {full_query}
+    if uses_querystring then
+        local query_words = split(full_query, ' ')
+        table.remove(query_words, 1)
+        local querystring = table.concat(query_words, ' ')
+        queries = split(querystring, ';')
+    end
     for i, url in pairs(urls) do
-        openURL(uses_querystring, acceptsIDs, url, app, query)
+        for i, query in pairs(queries) do
+            hs.alert(url..query)
+            openURL(uses_querystring, acceptsIDs, url, app, query)
+        end
     end
 
 end)
