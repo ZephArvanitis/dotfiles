@@ -201,5 +201,5 @@ bindKeyToApplication("T", "iTerm")
 bindKeyToApplication("V", "Visual Studio Code")
 bindKeyToApplication("W", "/Applications/TiddlyDesktop.app")
 -- X is reserved for screen placement
-
+bindKeyToApplication("Y", "Royal TSX")
 bindKeyToApplication("Z", "Zendesk")
