@@ -52,74 +52,90 @@ hs.hotkey.bind({"alt"}, "J", function()
 end)
 
 
--- Move a zendesk ticket from a browser to the zendesk "application"
-
--- Let's do some application-specific stuff
-local moveToZendeskBinding = nil
-function moveToZendesk()
-    local win = hs.window.focusedWindow()
-    local clipboard = hs.pasteboard.getContents()
-    hs.eventtap.keyStroke({"cmd"}, "L")
-    hs.eventtap.keyStroke({"cmd"}, "C")
-    hs.eventtap.keyStroke({}, "ESCAPE")
-    hs.eventtap.keyStroke({}, "ESCAPE")
-    local url = hs.pasteboard.getContents()
-    local match = string.match(url, "rescale.zendesk.com/agent/tickets/%d+")
-    hs.pasteboard.setContents(clipboard)
-    if (match) then
-        hs.alert("It's a zendesk link!")
-        local ticketID = string.match(match, "(%d+)")
-        hs.application.launchOrFocus("Zendesk")
-        -- for reasons beyond my ken, sending this keyStroke doesn't work.
-        -- Is very sad :'(
-        hs.eventtap.keyStroke({"ctrl", "alt"}, "F", 500000)
-        hs.eventtap.keyStrokes(ticketID)
-        hs.eventtap.keyStroke({}, "ENTER")
-        hs.eventtap.keyStroke({}, "ENTER")
-    else
-        -- hs.alert("Non-zendesk link, nop nop nop")
-    end
-end
-
--- attempting to debug keystroke sending, which works in some places but not others
--- hs.hotkey.bind({"cmd"}, "J", nil, function()
---     hs.alert('hello darkness')
---     hs.eventtap.event.newKeyEvent(hs.keycodes.map.ctrl, true):post()
---     hs.alert('cmd')
---     hs.eventtap.event.newKeyEvent(hs.keycodes.map.alt, true):post()
---     hs.alert('alt')
---     hs.eventtap.event.newKeyEvent("f", true):post()
---     hs.alert('u')
---     hs.eventtap.event.newKeyEvent("f", false):post()
---     hs.alert('u')
---     hs.eventtap.event.newKeyEvent(hs.keycodes.map.alt, false):post()
---     hs.alert('alt')
---     hs.eventtap.event.newKeyEvent(hs.keycodes.map.ctrl, false):post()
---     hs.alert('cmd')
---     -- hs.eventtap.keyStroke({"alt", "cmd"}, "F")
--- end)
---
 hs.hotkey.bind({"cmd","alt"}, "J", nil, function()
     hs.alert('rawr')
 end)
 
-function applicationWatcher(appName, eventType, appObject)
-    if (appName == "Safari" or appName == "Google Chrome") then
-        if (eventType == hs.application.watcher.activated) then
-            if (moveToZendeskBinding ~= nil) then
-                moveToZendeskBinding:enable()
-            else
-                moveToZendeskBinding = hs.hotkey.bind({"alt", "shift"}, "Z", moveToZendesk)
-            end
-        elseif (eventType == hs.application.watcher.deactivated) then
-            if (moveToZendeskBinding ~= nil) then
-                moveToZendeskBinding:disable()
-            end
-        end
-    end
+-- function applicationWatcher(appName, eventType, appObject)
+--     if (appName == "Safari" or appName == "Google Chrome") then
+--         if (eventType == hs.application.watcher.activated) then
+--             if (moveToZendeskBinding ~= nil) then
+--                 moveToZendeskBinding:enable()
+--             else
+--                 moveToZendeskBinding = hs.hotkey.bind({"alt", "shift"}, "Z", moveToZendesk)
+--             end
+--         elseif (eventType == hs.application.watcher.deactivated) then
+--             if (moveToZendeskBinding ~= nil) then
+--                 moveToZendeskBinding:disable()
+--             end
+--         end
+--     end
+-- end
+-- local appWatcher = hs.application.watcher.new(applicationWatcher)
+-- appWatcher:start()
+
+-- update slack status + team with info about being away for a minute
+function steppingAway(channel, messages, statuses)
+  hs.application.launchOrFocus("Slack")
+  hs.eventtap.keyStroke({"cmd"}, "K")
+
+  local oldClipboard = hs.pasteboard.getContents()
+  -- jump to puppycorn private channel
+  -- paste (much faster than using keyStrokes with a long string)
+  hs.pasteboard.setContents(channel)
+  hs.eventtap.keyStroke({"cmd"}, "V")
+  hs.eventtap.keyStroke({}, "return")
+
+  -- save previous draft
+  hs.eventtap.keyStroke({"cmd"}, "A")
+  hs.eventtap.keyStroke({"cmd"}, "X")
+  local oldMessage = hs.pasteboard.getContents()
+
+  -- update status
+  local statusUpdateCommand = "/status " .. statuses[math.random(#statuses)]
+  hs.pasteboard.setContents(statusUpdateCommand)
+  hs.eventtap.keyStroke({"cmd"}, "V")
+  hs.eventtap.keyStroke({}, "return")
+
+  -- message that I'll be out for a minute
+  local brbMessage = messages[ math.random( #messages ) ]
+  hs.pasteboard.setContents(brbMessage)
+  hs.eventtap.keyStroke({"cmd"}, "V")
+  -- but leave hitting the "enter" key to the user pls
+
+  -- paste old draft if any, otherwise old clipboard
+  if oldMessage == nil or oldMessage == '' then
+    hs.pasteboard.setContents(oldClipboard)
+  else
+    hs.pasteboard.setContents(oldMessage)
+  end
 end
-local appWatcher = hs.application.watcher.new(applicationWatcher)
-appWatcher:start()
+
+-- shortcuts to respond
+function medicalCall()
+  messages = {"Hey team, stepping out for about an hour",
+              "gotta step away for a bit, back soon",
+              "I'm heading out for an hour or so, see you all after that",
+              "I'll be out for about an hour",
+              "hey team, stepping out for a short bit :stethoscope:",
+              "I'll be out for about an hour :ambulance:"}
+  statuses = {":speech_balloon: back shortly",
+              ":brb: back in an hour"}
+  channel = "puppycorn-private"
+  steppingAway(channel, messages, statuses)
+end
+
+function fireCall()
+  messages = {"Hey team, stepping out for a couple hours, will catch up once I'm back",
+              "gotta step away for a bit, back in a while :fire:",
+              "I'll be out for about two hours",
+              "Gotta run, will catch up once I'm back :fire_engine:"}
+  statuses = {":speech_balloon: afk, back in a couple hours",
+              ":fire: back in a couple hours",
+              ":fire_engine: afk, back in a couple hours"}
+  channel = "puppycorn-private"
+  steppingAway(channel, messages, statuses)
+end
 
 -- Moving windows around
 hs.hotkey.bind({"alt"}, "A", function()
@@ -176,21 +192,21 @@ function bindKeyToApplication(key, applicationName)
     end)
 end
 
-bindKeyToApplication("1", "1Password 7")
+bindKeyToApplication("1", "1Password")
 -- A is reserved for screen placement
+bindKeyToApplication("B", "Obsidian")
 
-bindKeyToApplication("C", "Zendesk Chat")
 -- D is reserved for screen placement
 
-bindKeyToApplication("F", "Figma")
+-- F is for fire calls
 bindKeyToApplication("G", "Safari")
 bindKeyToApplication("H", "Google Chrome")
 
 -- J is reserved for the shortcut jumper
 bindKeyToApplication("K", "Slack")
 bindKeyToApplication("L", "Google Calendar")
+-- M is for medical calls
 
-bindKeyToApplication("N", "Asana")
 bindKeyToApplication("O", "Zoom.us")
 
 
@@ -199,7 +215,7 @@ bindKeyToApplication("O", "Zoom.us")
 bindKeyToApplication("T", "iTerm")
 
 bindKeyToApplication("V", "Visual Studio Code")
-bindKeyToApplication("W", "/Applications/TiddlyDesktop.app")
+
 -- X is reserved for screen placement
-bindKeyToApplication("Y", "Royal TSX")
-bindKeyToApplication("Z", "Zendesk")
+
+

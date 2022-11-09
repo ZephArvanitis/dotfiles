@@ -101,7 +101,8 @@ for _, shortcut in ipairs(hs.json.decode(io.open(".shortcuts.json"):read())) do
             page=shortcut['page'],
             application=shortcut['application'],
             querystring=shortcut['querystring'],
-            acceptsIDs=shortcut['acceptsIDs']
+            acceptsIDs=shortcut['acceptsIDs'],
+            macro=shortcut['macro']
         })
 end
 local platforms = {
@@ -111,9 +112,13 @@ local platforms = {
     ["KR"] = "https://kr.rescale.com",
     ["JP"] = "https://platform.rescale.jp",
     ["ST"] = "https://platform-stage.rescale.com",
+    ["JPDEV"] = "https://platform-jpdev.rescale.com",
     ["DEV"] = "https://platform-dev.rescale.com",
     ["GOVST"] = "https://itar-staging.rescale.com",
-    ["ALLPR"] = "https://kr.rescale.com;https://platform.rescale.jp;https://platform.rescale.com;https://itar.rescale.com;https://eu.rescale.com"
+    ["ALLPR"] = "https://kr.rescale.com;https://platform.rescale.jp;https://platform.rescale.com;https://itar.rescale.com;https://eu.rescale.com",
+    ["DEVALL"] = "https://platform-dev.rescale.com;https://platform-jpdev.rescale.com",
+    ["STALL"] = "https://platform-stage.rescale.com;https://itar-staging.rescale.com",
+    -- ["LOC"] = "http://platform-local.rescale.com",
 }
 for _, shortcut in ipairs(hs.json.decode(io.open(".platform-shortcuts.json"):read())) do
     for platformName, baseurl in pairs(platforms) do
@@ -128,7 +133,8 @@ for _, shortcut in ipairs(hs.json.decode(io.open(".platform-shortcuts.json"):rea
                 page=string.gsub(baseurl, ';', shortcut_url .. ';') .. shortcut_url_unescaped,
                 application=shortcut['application'],
                 querystring=shortcut['querystring'],
-                acceptsIDs=shortcut['acceptsIDs']
+                acceptsIDs=shortcut['acceptsIDs'],
+                macro=shortcut['macro']
             })
     end
 end
@@ -159,10 +165,17 @@ shortcutChooser = hs.chooser.new(function(choice)
     -- local query = string.lower(shortcutChooser:query())
     local full_query = shortcutChooser:query()
 
+    local macro_name = choice["macro"]
+    local is_macro = macro_name ~= nil
     local uses_querystring = choice["querystring"] ~= nil
     local acceptsIDs = choice["acceptsIDs"] ~= nil
     local url = choice["page"]
     local app = choice["application"]
+
+    if is_macro then
+        _G[macro_name]()
+        return
+    end
 
     -- handle multi-url situations
     -- multiurl = string.find(word, ";", true) ~= nil
@@ -177,7 +190,6 @@ shortcutChooser = hs.chooser.new(function(choice)
     end
     for i, url in pairs(urls) do
         for i, query in pairs(queries) do
-            hs.alert(url..query)
             openURL(uses_querystring, acceptsIDs, url, app, query)
         end
     end
