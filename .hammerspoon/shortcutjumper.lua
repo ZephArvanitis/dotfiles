@@ -118,11 +118,17 @@ local platforms = {
     ["ALLPR"] = "https://kr.rescale.com;https://platform.rescale.jp;https://platform.rescale.com;https://itar.rescale.com;https://eu.rescale.com",
     ["DEVALL"] = "https://platform-dev.rescale.com;https://platform-jpdev.rescale.com",
     ["STALL"] = "https://platform-stage.rescale.com;https://itar-staging.rescale.com",
-    -- ["LOC"] = "http://platform-local.rescale.com",
+    ["LOC"] = "http://platform-local.rescale.com:8000",
 }
+
 for _, shortcut in ipairs(hs.json.decode(io.open(".platform-shortcuts.json"):read())) do
     for platformName, baseurl in pairs(platforms) do
         shortcut_url_unescaped = shortcut['page']
+        -- local platform uses port 8000 for everything, including site
+        -- admin
+        if platformName == "LOC" then
+            shortcut_url_unescaped = shortcut_url_unescaped:gsub(":8082", "")
+        end
         -- for some reason shortcut_url:gsub doesn't work here, but
         -- string.gsub does
         shortcut_url = string.gsub(shortcut_url_unescaped, '%%', '%%%%')
