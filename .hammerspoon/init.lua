@@ -177,6 +177,26 @@ hs.hotkey.bind({"alt"}, "X", function()
   win:setFrame(f)
 end)
 
+function moveWindowToDisplay(d)
+  return function()
+    local displays = hs.screen.allScreens()
+    local win = hs.window.focusedWindow()
+    win:moveToScreen(displays[d], false, true)
+  end
+end
+-- From https://stackoverflow.com/a/58662204
+function throwToOtherDisplay()
+  -- Get the focused window
+  local win = hs.window.focusedWindow()
+  -- Get the screen where the focused window is displayed, a.k.a. current screen
+  local screen = win:screen()
+  -- Compute the unitRect of the focused window relative to the current screen
+  -- and move the window to the next screen setting the same unitRect
+  win:move(win:frame():toUnitRect(screen:frame()), screen:next(), true, 0)
+end
+
+hs.hotkey.bind({"alt"}, "E", throwToOtherDisplay)
+
 -- Send keystrokes
 -- function keyStrokes(str)
 --   return function()
@@ -217,5 +237,3 @@ bindKeyToApplication("T", "iTerm")
 bindKeyToApplication("V", "Visual Studio Code")
 
 -- X is reserved for screen placement
-
-
