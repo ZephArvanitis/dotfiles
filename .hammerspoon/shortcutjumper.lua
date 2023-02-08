@@ -152,16 +152,14 @@ function openURL(uses_querystring, acceptsIDs, url, app, querystring)
         end
         url = url:gsub("%%s", querystring)
     end
-    local oldClipboard = hs.pasteboard.getContents()
-    hs.pasteboard.setContents(url)
-    hs.application.launchOrFocus(app)
-    -- new tab, fairly cross-browser
-    hs.eventtap.keyStroke({"cmd"}, "T")
-    -- paste (much faster than using keyStrokes with a long string)
-    hs.eventtap.keyStroke({"cmd"}, "V")
-    hs.eventtap.keyStroke({}, "return")
-    -- reset old clipboard
-    hs.pasteboard.setContents(oldClipboard)
+    escaped_url = url:gsub(" ", "%%20")
+    app_id_for_app = {["Chrome"]="com.google.Chrome",
+                      ["chrome"]="com.google.Chrome",
+                      ["Google Chrome"]="com.google.Chrome",
+                      ["Safari"]="com.apple.Safari",
+                      ["safari"]="com.apple.Safari"}
+    app_id = app_id_for_app[app]
+    hs.urlevent.openURLWithBundle(escaped_url, app_id)
 end
 
 -- Create the shortcutChooser.
@@ -248,4 +246,3 @@ shortcutChooser:choices(shortcutChoices)
 
 shortcutChooser:rows(5)
 shortcutChooser:bgDark(true)
-
