@@ -17,8 +17,8 @@
     gdiff = !cd ./$GIT_PREFIX && git diff $(git merge-base @ origin/master)..@
     orebase = rebase origin/master
     osquash = !git reset --soft $(git merge-base @ origin/master) && git commit -m "temp" && git orebase
-    pusho = !git push origin HEAD:dev/zeph/$(git rev-parse --symbolic-full-name --abbrev-ref HEAD)
-    pullo = !git pull origin dev/zeph/$(git rev-parse --symbolic-full-name --abbrev-ref HEAD)
+    pusho = !git push origin HEAD:zeph/$(git rev-parse --symbolic-full-name --abbrev-ref HEAD)
+    pullo = !git pull origin zeph/$(git rev-parse --symbolic-full-name --abbrev-ref HEAD)
     gst = !git diff $(git merge-base @ origin/master)..@ --name-only
     cp = cherry-pick
 
