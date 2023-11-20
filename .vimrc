@@ -1,35 +1,6 @@
 " We don't care about vi
 set nocompatible
 
-
-" VUNDLE/BUNDLE THINGS
-" As of 2020-07-04, I'm moving to vim-plug, which seems to be the
-" community-favored alternative. For now (and regardless of the fact that
-" I version control this stuff), I'm commenting out my old vundle config.
-" filetype off
-" set rtp+=~/.vim/bundle/Vundle.vim
-" call vundle#begin()
-" " let Vundle manage Vundle
-" Plugin 'gmarik/vundle'
-" Plugin 'lervag/vimtex'
-" let g:vimtex_view_method = 'skim'
-" Plugin 'tpope/vim-surround'
-" Plugin 'tpope/vim-repeat'
-" Plugin 'petRUShka/vim-opencl'
-" " Rust
-" Plugin 'rust-lang/rust.vim'
-" " Haskell joy
-" Plugin 'Haskell-Conceal'
-" Plugin 'indenthaskell.vim'
-" Plugin 'lukerandall/haskellmode-vim'
-" Plugin 'gibiansky/vim-latex-objects'
-" let g:haddock_browser='open'
-" Plugin 'tpope/vim-markdown'
-" Plugin 'scrooloose/Syntastic'
-" Plugin 'vim-scripts/indentpython.vim'
-" Plugin 'tmhedberg/SimpylFold'
-" call vundle#end()
-
 " vim-plug: automatically clone the plugin if it's not already present.
 " This is nice for setting up on new instances of servers etc.
 if empty(glob('~/.vim/autoload/plug.vim'))
@@ -80,6 +51,7 @@ Plug 'maxmellon/vim-jsx-pretty'
 " Python
 Plug 'jeetsukumaran/vim-pythonsense'
 Plug 'python-mode/python-mode', { 'for': 'python', 'branch': 'develop' }
+Plug 'dense-analysis/ale'
 " Plug 'scrooloose/Syntastic'
 " Plug 'vim-scripts/indentpython.vim'
 
@@ -100,6 +72,7 @@ call plug#end()
 
 let g:syntastic_always_populate_loc_list=1
 let g:syntastic_auto_loc_list=1
+
 " Python checking/autopep8 formatting
 let g:syntastic_python_checkers = ['python', 'flake8', 'pylint']
 au FileType python setlocal formatprg=autopep8\ -
@@ -109,6 +82,16 @@ autocmd BufWinLeave *.py setlocal foldexpr< foldmethod<
 let g:SimpylFold_docstring_preview = 2
 map <F2> :lprev<CR>
 map <F3> :lnext<CR>
+
+" Only lint when the file is opened/saved, not every time we edit something
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_insert_leave = 0
+let g:ale_fix_on_save = 1
+let g:ale_fixers = {
+\   '*': ['remove_trailing_lines', 'trim_whitespace'],
+\   'python': ['black', 'isort'],
+\}
+
 " Make CtrlP work...maybe
 set runtimepath^=~/.vim/bundle/ctrlp.vim
 filetype indent plugin on
@@ -166,7 +149,8 @@ set history=1000
 
 " Set the look of vim
 " set background=dark
-colorscheme zenburn
+" colorscheme zenburn
+colorscheme Atelier_LakesideLight
 let g:lightline = {'colorscheme': 'wombat'}
 " Other  favorites:
 "   dark: zenburn, PaperColor, OceanicNext, Monokai, wombat
