@@ -107,18 +107,18 @@ for _, shortcut in ipairs(hs.json.decode(io.open(".shortcuts.json"):read())) do
 end
 local platforms = {
     ["PROD"] = "https://platform.rescale.com",
-    ["ITAR"] = "https://itar.rescale.com",
-    ["EU"] = "https://eu.rescale.com",
+    ["GOV"] = "https://itar.rescale.com",
+    ["DE"] = "https://eu.rescale.com",
     ["KR"] = "https://kr.rescale.com",
     ["JP"] = "https://platform.rescale.jp",
     ["ST"] = "https://platform-stage.rescale.com",
-    ["JPDEV"] = "https://platform-jpdev.rescale.com",
     ["DEV"] = "https://platform-dev.rescale.com",
     ["GOVST"] = "https://itar-staging.rescale.com",
     ["ALLPR"] = "https://kr.rescale.com;https://platform.rescale.jp;https://platform.rescale.com;https://itar.rescale.com;https://eu.rescale.com",
-    ["DEVALL"] = "https://platform-dev.rescale.com;https://platform-jpdev.rescale.com",
+    ["DEVALL"] = "https://platform-dev.rescale.com",
     ["STALL"] = "https://platform-stage.rescale.com;https://itar-staging.rescale.com",
-    ["LOC"] = "http://platform-local.rescale.com:8000",
+    ["LOC"] = "http://platform-local.rescale.com:8005",
+    ["IL5ST"] = "https://platform.mil-staging.rescale-gov.com",
 }
 
 for _, shortcut in ipairs(hs.json.decode(io.open(".platform-shortcuts.json"):read())) do
@@ -126,7 +126,8 @@ for _, shortcut in ipairs(hs.json.decode(io.open(".platform-shortcuts.json"):rea
         shortcut_url_unescaped = shortcut['page']
         -- local platform uses port 8000 for everything, including site
         -- admin
-        if platformName == "LOC" then
+        -- IL5 platform doesn't specify port 8082 for...reasons?
+        if platformName == "LOC" or platformName == "IL5ST" then
             shortcut_url_unescaped = shortcut_url_unescaped:gsub(":8082", "")
         end
         -- for some reason shortcut_url:gsub doesn't work here, but
