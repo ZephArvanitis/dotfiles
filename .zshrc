@@ -1,25 +1,27 @@
 # GENERAL
 export PATH="/usr/local/bin:$PATH"
 export PATH="/usr/local/share/dotnet:$PATH"
+export PATH="/Users/zeph/.local/bin:$PATH"
+export PATH="/opt/homebrew/bin:$PATH"
 export PATH="/Library/Tex/texbin:$PATH"
-export PATH="/Users/narvanitis/opt/anaconda3/condabin:$PATH"
-export PATH="$PATH:/Users/narvanitis/.dotnet/tools"
 export PATH="/usr/local/Cellar/mssql-tools/14.0.5.0/bin/:$PATH"
-# ruby executables like pod
-export PATH="/usr/local/lib/ruby/gems/2.6.0/bin:$PATH"
+export PYENV_ROOT=$(pyenv root)
+export PATH="$PYENV_ROOT/shims:$PATH"
+
+export PATH="/usr/local/opt:$PATH"
 
 alias xclip='xclip -selection clipboard'
 alias tcp='tmux show-buffer | xclip'
 
-# Much of this is shamelessly stolen from gibiansky/dotfiles
+alias k=kubectl
+alias tf=terraform
+
+alias now="date +'%Y-%m-%d-%H.%M.%S'"
+
 # Use a pythonrc file
 export PYTHONSTARTUP="$HOME/.pythonrc"
 # various shortcuts
-alias -g @='&> /dev/null &!'
-alias notes='vim ~/.notes'
 alias hgrep='history 0 | grep'
-alias useful-dir='echo `pwd` " - " $1 >> ~/useful-dirs'
-alias droplet="ssh -i ~/.ssh/heytasha_rsa root@162.243.132.233"
 # use virtualenv version of ipython if present
 alias ipy="python -c 'import IPython; IPython.terminal.ipapp.launch_new_instance()'"
 
@@ -29,20 +31,26 @@ autoload colors && colors
 export TEXINPUTS=".:~/myLaTeX:"
 # Use coreutils instead of whatever mac provides
 export PATH="$(brew --prefix coreutils)/libexec/gnubin:$PATH"
-# export PATH="/Users/narvanitis/Library/Haskell/bin:$PATH"
 export PATH="$(brew --prefix)/bin:$PATH"
-# Binutils (installed by hand)
-# export PATH=/usr/local/i386-elf/bin:$PATH
-export LSCOLORS="ExGxbxbxCxegedabagacad"
-alias ls='ls -G'
+
+# Custom ls colors
+export LS_COLORS="di=1;34:ln=1;35:so=31:pi=31:ex=1;32:bd=34;46:cd=34;43:su=30;41:sg=30;46:tw=30;42:ow=30;43"
+alias ls='ls -F --color=auto'
+
 # Color tab/^D completion like ls
 zstyle ':completion:*' list-colors "${(@s.:.)LS_COLORS}"
 autoload -Uz compinit
 compinit
+
 # Enable autocompletion inside git repositories
 fpath=(~/.zsh $fpath)
 autoload -Uz compinit && compinit
-zstyle ':completion:*:*:git:*' script ~/.git-completion.sh
+# zstyle ':completion:*:*:git:*' script ~/.git-completion.sh
+#
+# enable auto-completion (requires brew install bash-completion)
+if [ -f /opt/local/etc/profile.d/bash_completion.sh ]; then
+    . /opt/local/etc/profile.d/bash_completion.sh
+fi
 
 # And vi mode as well
 bindkey -v
@@ -50,6 +58,7 @@ bindkey -M viins '^a' beginning-of-line
 bindkey -M vicmd '^a' beginning-of-line
 bindkey -M viins '^e' end-of-line
 bindkey -M vicmd '^e' end-of-line
+
 # Set short timeout to reduce jarring lag after <ESC>
 export KEYTIMEOUT=1
 # Handle deletion of old text gracefully
@@ -85,131 +94,74 @@ setopt hist_reduce_blanks
 # Don't store 'history' and 'fc' commands into the history.
 setopt histnostore
 
-
-
-
-# Update prompt every time it's run
-setopt prompt_subst
-
-# Make colors behave themselves
-green="%{$fg[green]%}"
-red="%{$fg[red]%}"
-blue="%{$fg[blue]%}"
-cyan="%{$fg[cyan]%}"
-bold_cyan="%{$fg_bold[cyan]%}"
-bold_blue="%{$fg_bold[blue]%}"
-color_reset="%{$reset_color%}"
-
-
-# %? is the return code of the process.
-# %U/%u is start and stop underline, respectively.
-# %) = ')'
-return_code="(%Uret %?%u%)"  
-
-# The syntax for conditional expressions is %n(X.true-text.false-text), where n is an integer
-# (defaulting to 0 if not provided) and X is a test character. The different tests are detailed
-# at www.acm.uiuc.edu/workshops/zsh/prompt/conditionals.html, but the ? test is true if the exit
-# static of the previous process was equal to the integer n.
-#  
-# Color the prompt green normally, and red if the command fails. If it fails, print the return code.
-exit_color="%0(?.$green.$red)"
-exit_code_color="%0(?.$green.$red$return_code )"
-
-# History number: %! is the current command in the history.
-history_num="[%!]"
-
-# Current time, in 24 hour format, with seconds.
-cur_time="%*"
-
-# The user@hostname part.
-prompt_user="%n@%m"
-
-# Use a different prompt character if I'm inside a git repository.
-# Show the branch I'm on, too.
-function prompt_char {
-    # = means it ignores aliases, apparently... (uses original thing)
-    BRANCH=`=git branch 2> /dev/null | grep '*' | sed 's/* //'`
-    BRANCH_NAME=${BRANCH:0:15}
-    =git branch >/dev/null 2>/dev/null && echo "($BRANCH_NAME) ⇒" && return
-    =git branch >/dev/null 2>/dev/null && echo "⇒" && return
-    echo '$'
-}
-
-# Use a special version of the working directory.
-function working_dir {
-    # Get the actual directory, replacing $HOME with ~.
-    REAL_PWD=$(pwd | sed s,$HOME,~,);
-
-    # Break up directory into lines.
-    DIRS=$(echo $REAL_PWD | tr '/' '\n')
-
-    # How many directories to leave unshortened.
-    UNSHORTENED=2
-
-    # How many character to reduce shortened directories to.
-    SHORT_LENGTH=2
-
-    # Get unshortened directories.
-    UNSHORTENED_DIRS=`echo $DIRS | tail -n $UNSHORTENED`
-
-    # If the unshortened directories are all of them, don't bother with the rest.
-    if [[ `echo $DIRS | wc -l` -le $UNSHORTENED ]]; then
-        NBYTES=$(( $(echo $UNSHORTENED_DIRS | wc -c) - 1 ))
-        echo $UNSHORTENED_DIRS | head -c$NBYTES | tr '\n' '/'
-        return
-    fi
-
-    # Get all pieces that need to be shortened.
-    N_SHORTENED=$(( $(echo $DIRS | wc -l ) - $UNSHORTENED ))
-    SHORTENED_DIRS=`echo $DIRS | cut -c1-$SHORT_LENGTH | head -n$N_SHORTENED`
-
-    # Print out the directory. Make sure not to include trailing /, which is why we cut off that newline using head.
-    NBYTES=$(( $(echo $UNSHORTENED_DIRS | wc -c) - 1 ))
-    (echo $SHORTENED_DIRS; echo $UNSHORTENED_DIRS | head -c$NBYTES) | tr '\n' '/'
-}
-prompt_cwd='$(working_dir)'
-
-# Store current keymap magically
-function zle-keymap-select {
-    CURRENT_KEYMAP=$KEYMAP
-    zle reset-prompt
-}
-zle -N zle-keymap-select
-
-# Color code bits based on mode
-function vimode_color {
-    if [[ $CURRENT_KEYMAP == "vicmd" ]]; then
-        echo -n $bold_cyan
-    else
-        echo -n $bold_blue
-    fi
-}
-vimode='$(vimode_color)'
-
-# Also offer visual difference based on vi mode
-function vimode_symbol {
-    if [[ $CURRENT_KEYMAP == "vicmd" ]]; then
-        echo -n ☆☆☆
-    else
-        echo -n ★★★
-    fi
-}
-vimodesym='$(vimode_symbol)'
-
-# The final prompt! Ain't it adorable?
-# Old prompt with time
-# PROMPT="$exit_code_color$history_num $vimode$vimodesym$color_reset$exit_color $cur_time $prompt_user $prompt_cwd "'$(prompt_char)'" $color_reset"
-PROMPT="$vimode$vimodesym$color_reset$exit_code_color$history_num $cur_time $prompt_user $prompt_cwd"$'\n''$(prompt_char)'" $color_reset"
-
-export PATH="/usr/local/opt/tcl-tk/bin:$PATH"
-
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# Use starship for command prompt
+eval "$(starship init zsh)"
+
+# zoxide is a really fancy and fun replacement for cd
+# configuration described here: https://github.com/ajeetdsouza/zoxide
+eval "$(zoxide init zsh)"
+
+# bat is a nice replacement for cat
+export BAT_THEME='OneHalfLight'
+
+autoload -U +X bashcompinit && bashcompinit
+complete -o nospace -C /usr/local/bin/terraform terraform
+[[ $commands[kubectl] ]] && source <(kubectl completion zsh)
+
+
+###########
+# RESCALE #
+###########
+# Get all django endpoints from web
+alias endpoints='source ~/code/rescale/venv/bin/activate && cd ~/code/rescale/rescale-platform-web/ && ./manage.py show_urls'
+
+# boundary aliases
+alias boundary-build=rescale-boundary-proxy-build-server
+alias boundary-ssh=rescale-boundary-ssh
 
 # API keys stored in a separate file so I can version control this one.
 source ~/.apikey_script
 
 export RESCALE_METADATA_BASE=/Users/zeph/code/rescale/rescale-platform-metadata
 
-export PATH="$HOME/.poetry/bin:$PATH"
+function awsenv {
+    pushd /Users/zeph/code/rescale/support-tools/aws-cli-wrappers
+    source aws-cli-environment $1 $2
+    popd
+}
+
+# Use lnav on local platform
+alias lnav-local='lnav ~/.pm2/logs/celery*.log ~/.pm2/logs/django*.log ~/.pm2/logs/jobstarter*.log ~/.pm2/logs/service*.log ~/.pm2/logs/watch-web*.log'
+alias start-java='pm2 start jobstarter service'
+alias stop-java='pm2 stop jobstarter service'
+alias restart-java='pm2 restart jobstarter service'
+alias start-python='pm2 start celery celery-beat django watch-web'
+alias stop-python='pm2 stop celery celery-beat django watch-web'
+alias restart-python='pm2 restart celery celery-beat django watch-web'
+alias start-tunnel='pm2 start tunnel-cluster tunnel-web'
+alias stop-tunnel='pm2 stop tunnel-cluster tunnel-web'
+alias restart-tunnel='pm2 restart tunnel-cluster tunnel-web'
+alias restart-build='pm2 stop build;sudo kill $(sudo lsof -i :443 | grep boundary | awk "{print $2}"); sudo -k;pm2 start build'
+alias stop-build='pm2 stop build;sudo kill $(sudo lsof -i :443 | grep boundary | awk "{print $2}"); sudo -k'
+alias start-build='pm2 start build'
+
+# Enable us-east-2 for linden enablement on local platform
+export RESCALE_REGIONS='us-east-1 us-east-2'
+
+export RESCALE_INFRA_USER=zeph
+
+# Boundary config
+export RESCALE_BOUNDARY_UTILS=$HOME/code/rescale/infrastructure-access/boundary/utils
+source $RESCALE_BOUNDARY_UTILS/rescale-boundary-helper-functions.sh
+export RESCALE_BOUNDARY_JOB_SERVICE_PORT=8005
+export RESCALE_BOUNDARY_CLUSTER_SERVICE_PORT=8006
+
+###############################################
+# Everything below here was added by a script #
+###############################################
+
+export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
