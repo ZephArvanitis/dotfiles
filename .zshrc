@@ -14,6 +14,7 @@ alias xclip='xclip -selection clipboard'
 alias tcp='tmux show-buffer | xclip'
 
 alias k=kubectl
+alias g=git
 alias tf=terraform
 
 alias now="date +'%Y-%m-%d-%H.%M.%S'"
@@ -59,6 +60,9 @@ bindkey -M vicmd '^a' beginning-of-line
 bindkey -M viins '^e' end-of-line
 bindkey -M vicmd '^e' end-of-line
 
+# reverse history search
+bindkey '^R' history-incremental-search-backward
+
 # Set short timeout to reduce jarring lag after <ESC>
 export KEYTIMEOUT=1
 # Handle deletion of old text gracefully
@@ -93,6 +97,8 @@ setopt histignoredups
 setopt hist_reduce_blanks
 # Don't store 'history' and 'fc' commands into the history.
 setopt histnostore
+# Share between different shells
+setopt share_history
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
@@ -148,6 +154,20 @@ alias restart-tunnel='pm2 restart tunnel-cluster tunnel-web'
 alias restart-build='pm2 stop build;sudo kill $(sudo lsof -i :443 | grep boundary | awk "{print $2}"); sudo -k;pm2 start build'
 alias stop-build='pm2 stop build;sudo kill $(sudo lsof -i :443 | grep boundary | awk "{print $2}"); sudo -k'
 alias start-build='pm2 start build'
+
+docker-login() {
+    # Take a profile argument, do sso login if necessary and then pass
+    # creds to docker
+    set -x
+    if ! aws sts get-caller-identity --profile $1; then
+        aws sso login --profile $1
+    fi
+
+    ACCOUNT=$(aws sts get-caller-identity --query 'Account' --profile $1 --output text)
+    REGION=$(aws configure get region --profile $1)
+
+    aws --profile $1 ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ACCOUNT.dkr.ecr-fips.$REGION.amazonaws.com
+}
 
 # Enable us-east-2 for linden enablement on local platform
 export RESCALE_REGIONS='us-east-1 us-east-2'

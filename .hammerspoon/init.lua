@@ -74,28 +74,49 @@ end)
 -- local appWatcher = hs.application.watcher.new(applicationWatcher)
 -- appWatcher:start()
 
+function sleep(a)
+    local sec = tonumber(os.clock() + a);
+    while (os.clock() < sec) do
+    end
+end
+
 -- update slack status + team with info about being away for a minute
 function steppingAway(channel, messages, statuses)
+
   hs.application.launchOrFocus("Slack")
-  hs.eventtap.keyStroke({"cmd"}, "K")
+  sleep(0.2)
 
   local oldClipboard = hs.pasteboard.getContents()
-  -- jump to puppycorn private channel
+
+  -- update status
+  hs.eventtap.keyStroke({"cmd", "shift"}, "Y")
+  sleep(0.2)
+  -- clear existing status instead of appending to it
+  hs.eventtap.keyStroke({"cmd"}, "A")
+  hs.eventtap.keyStroke({"cmd"}, "X")
+  -- TODO: update status emoji separately – probably via:
+  --   1. shift-tab
+  --   2. enter
+  --   3. :emojihere:
+  --   4. tab
+  --   5. enter to save
+  local statusUpdateCommand = statuses[math.random(#statuses)]
+  hs.pasteboard.setContents(statusUpdateCommand)
+  hs.eventtap.keyStroke({"cmd"}, "V")
+  hs.eventtap.keyStroke({}, "return")
+
+  -- jump to specified channel
   -- paste (much faster than using keyStrokes with a long string)
+  hs.eventtap.keyStroke({"cmd"}, "K")
   hs.pasteboard.setContents(channel)
   hs.eventtap.keyStroke({"cmd"}, "V")
+  sleep(0.2)
   hs.eventtap.keyStroke({}, "return")
 
   -- save previous draft
   hs.eventtap.keyStroke({"cmd"}, "A")
   hs.eventtap.keyStroke({"cmd"}, "X")
   local oldMessage = hs.pasteboard.getContents()
-
-  -- update status
-  local statusUpdateCommand = "/status " .. statuses[math.random(#statuses)]
-  hs.pasteboard.setContents(statusUpdateCommand)
-  hs.eventtap.keyStroke({"cmd"}, "V")
-  hs.eventtap.keyStroke({}, "return")
 
   -- message that I'll be out for a minute
   local brbMessage = messages[ math.random( #messages ) ]
@@ -116,12 +137,11 @@ function medicalCall()
   messages = {"Hey team, stepping out for about an hour",
               "gotta step away for a bit, back soon",
               "I'm heading out for an hour or so, see you all after that",
-              "I'll be out for about an hour",
               "hey team, stepping out for a short bit :stethoscope:",
               "I'll be out for about an hour :ambulance:"}
-  statuses = {":speech_balloon: back shortly",
+  statuses = {"back shortly",
               ":brb: back in an hour"}
-  channel = "puppycorn-private"
+  channel = "teamred"
   steppingAway(channel, messages, statuses)
 end
 
@@ -130,10 +150,10 @@ function fireCall()
               "gotta step away for a bit, back in a while :fire:",
               "I'll be out for about two hours",
               "Gotta run, will catch up once I'm back :fire_engine:"}
-  statuses = {":speech_balloon: afk, back in a couple hours",
+  statuses = {"afk, back in a couple hours",
               ":fire: back in a couple hours",
               ":fire_engine: afk, back in a couple hours"}
-  channel = "puppycorn-private"
+  channel = "teamred"
   steppingAway(channel, messages, statuses)
 end
 
@@ -221,7 +241,7 @@ bindKeyToApplication("B", "Obsidian")
 -- F is for fire calls
 bindKeyToApplication("G", "Safari")
 bindKeyToApplication("H", "Google Chrome")
-
+bindKeyToApplication("I", "IntelliJ IDEA")
 -- J is reserved for the shortcut jumper
 bindKeyToApplication("K", "Slack")
 bindKeyToApplication("L", "Google Calendar")
