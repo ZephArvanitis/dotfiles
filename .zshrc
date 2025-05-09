@@ -7,6 +7,10 @@ export PATH="/Library/Tex/texbin:$PATH"
 export PATH="/usr/local/Cellar/mssql-tools/14.0.5.0/bin/:$PATH"
 export PYENV_ROOT=$(pyenv root)
 export PATH="$PYENV_ROOT/shims:$PATH"
+export PYENV_ROOT=$(pyenv root)
+export PATH="$PYENV_ROOT/shims:$PATH"
+eval "$(pyenv init -)"
+export PATH="/usr/local/opt/gettext/bin:$PATH"
 
 export PATH="/usr/local/opt:$PATH"
 
@@ -133,6 +137,7 @@ alias boundary-ssh=rescale-boundary-ssh
 source ~/.apikey_script
 
 export RESCALE_METADATA_BASE=/Users/zeph/code/rescale/rescale-platform-metadata
+export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES # for some reason necessary to avoid infinite errors in celery worker? https://stackoverflow.com/a/52230415
 
 function awsenv {
     pushd /Users/zeph/code/rescale/support-tools/aws-cli-wrappers
@@ -167,6 +172,67 @@ docker-login() {
     REGION=$(aws configure get region --profile $1)
 
     aws --profile $1 ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ACCOUNT.dkr.ecr-fips.$REGION.amazonaws.com
+    aws --profile $1 ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ACCOUNT.dkr.ecr.$REGION.amazonaws.com
+}
+
+deprod-grafana() {
+    aws eks update-kubeconfig --region eu-central-1 --name deprod-infra --profile prod
+
+    kubectl get secret --namespace platform-metrics grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo
+    POD_NAME=$(kubectl get pods --namespace platform-metrics -l "app.kubernetes.io/name=grafana,app.kubernetes.io/instance=grafana" -o jsonpath="{.items[0].metadata.name}")
+
+    kubectl --namespace platform-metrics port-forward $POD_NAME 3000
+}
+func prepend() {
+  while read line; do echo "${1}${line}"; done
+}
+
+func git-grep-multi() {
+  list=""
+  dir="."
+  pattern=""
+  sep=": "
+  local OPTIND
+  while getopts 'lfd:p:' flag; do
+    case "${flag}" in
+      l) list='-l' ;;
+      d) dir="${OPTARG}" ;;
+      p) pattern="${OPTARG}" ;;
+      f) sep="/" ;;
+      *) "unknown option ${flag}"; return 1 ;;
+    esac
+  done
+
+  if [ -z "$pattern" ]; then
+    echo "Pattern not provided."
+    return 1
+  fi
+
+  for repo in $(find ${dir} -maxdepth 2 -name ".git" | xargs dirname); do
+    prefix="$(basename $repo)"
+    if [ -n "$list" ]; then
+      prefix=$repo
+    fi
+
+    (cd $repo && git --no-pager grep ${list} --color=always "${pattern}" | prepend "${prefix}${sep}")
+  done
+}
+
+export RESCALE_ROOT_DIR=~/code/rescale
+
+function rgrep() {
+  list=""
+  fullpath=""
+  local OPTIND
+  while getopts 'lf' flag; do
+    case "${flag}" in
+      l) list='-l' ;;
+      f) fullpath='-f' ;;
+      *) "unknown option ${flag}"; return 1 ;;
+    esac
+  done
+  shift $((OPTIND-1))
+  git-grep-multi ${list} ${fullpath} -d ${RESCALE_ROOT_DIR-~/rescale} -p $1
 }
 
 # Enable us-east-2 for linden enablement on local platform
@@ -185,3 +251,10 @@ export RESCALE_BOUNDARY_CLUSTER_SERVICE_PORT=8006
 ###############################################
 
 export PATH="/usr/local/opt/openssl@1.1/bin:$PATH"
+
+# The next line updates PATH for the Google Cloud SDK.
+if [ -f '/Users/zeph/Downloads/google-cloud-sdk/path.zsh.inc' ]; then . '/Users/zeph/Downloads/google-cloud-sdk/path.zsh.inc'; fi
+
+# The next line enables shell command completion for gcloud.
+if [ -f '/Users/zeph/Downloads/google-cloud-sdk/completion.zsh.inc' ]; then . '/Users/zeph/Downloads/google-cloud-sdk/completion.zsh.inc'; fi
+export PATH="/opt/homebrew/opt/haproxy@2.8/bin:$PATH"
