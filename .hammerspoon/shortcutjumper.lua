@@ -113,12 +113,13 @@ local platforms = {
     ["JP"] = "https://platform.rescale.jp",
     ["ST"] = "https://platform-stage.rescale.com",
     ["DEV"] = "https://platform-dev.rescale.com",
+    ["IL5ST"] = "https://platform.mil-staging.rescale-gov.com",
     ["GOVST"] = "https://itar-staging.rescale.com",
     ["ALLPR"] = "https://kr.rescale.com;https://platform.rescale.jp;https://platform.rescale.com;https://itar.rescale.com;https://eu.rescale.com",
     ["DEVALL"] = "https://platform-dev.rescale.com",
     ["STALL"] = "https://platform-stage.rescale.com;https://itar-staging.rescale.com",
     ["LOC"] = "http://platform-local.rescale.com:8005",
-    ["IL5ST"] = "https://platform.mil-staging.rescale-gov.com",
+    ["CNDE"] = "http://platform.zeph.local.rescale.internal",
 }
 
 for _, shortcut in ipairs(hs.json.decode(io.open(".platform-shortcuts.json"):read())) do
@@ -154,11 +155,14 @@ function openURL(uses_querystring, acceptsIDs, url, app, querystring)
         url = url:gsub("%%s", querystring)
     end
     escaped_url = url:gsub(" ", "%%20")
+    -- New app? use `osascript -e 'id of app "Firefox"'`
     app_id_for_app = {["Chrome"]="com.google.Chrome",
                       ["chrome"]="com.google.Chrome",
                       ["Google Chrome"]="com.google.Chrome",
                       ["Safari"]="com.apple.Safari",
-                      ["safari"]="com.apple.Safari"}
+                      ["safari"]="com.apple.Safari",
+                      ["firefox"]="com.mozilla.firefox",
+                      ["Firefox"]="com.mozilla.firefox"}
     app_id = app_id_for_app[app]
     hs.urlevent.openURLWithBundle(escaped_url, app_id)
 end

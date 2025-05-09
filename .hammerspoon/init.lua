@@ -4,6 +4,8 @@ hs.hotkey.bind({"alt"}, "R", function()
   hs.reload()
 end)
 
+package.path = package.path .. ";" ..  hs.configdir .. "/MySpoons/?.spoon/init.lua"
+
 require("util")
 require("shortcutjumper")
 
@@ -238,16 +240,16 @@ bindKeyToApplication("B", "Obsidian")
 
 -- D is reserved for screen placement
 
--- F is for fire calls
+bindKeyToApplication("F", "Firefox")
 bindKeyToApplication("G", "Safari")
 bindKeyToApplication("H", "Google Chrome")
-bindKeyToApplication("I", "IntelliJ IDEA")
+bindKeyToApplication("I", "IntelliJ IDEA CE")
 -- J is reserved for the shortcut jumper
 bindKeyToApplication("K", "Slack")
 bindKeyToApplication("L", "Google Calendar")
--- M is for medical calls
+-- M
 
-bindKeyToApplication("O", "Zoom.us")
+bindKeyToApplication("O", "Google Meet")
 
 
 -- R is reserved for refreshing hammerspoon
