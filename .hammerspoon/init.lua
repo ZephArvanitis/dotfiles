@@ -4,10 +4,34 @@ hs.hotkey.bind({"alt"}, "R", function()
   hs.reload()
 end)
 
+hs.loadSpoon("ShortcutJumper")
+platforms = {
+    ["PROD"] = "https://platform.rescale.com",
+    ["GOV"] = "https://itar.rescale.com",
+    ["DE"] = "https://eu.rescale.com",
+    ["KR"] = "https://kr.rescale.com",
+    ["JP"] = "https://platform.rescale.jp",
+    ["ST"] = "https://platform-stage.rescale.com",
+    ["DEV"] = "https://platform-dev.rescale.com",
+    ["IL5ST"] = "https://platform.mil-staging.rescale-gov.com",
+    ["GOVST"] = "https://itar-staging.rescale.com",
+    ["ALLPROD"] = "https://kr.rescale.com;https://platform.rescale.jp;https://platform.rescale.com;https://itar.rescale.com;https://eu.rescale.com",
+    ["DEVALL"] = "https://platform-dev.rescale.com",
+    ["STALL"] = "https://platform-stage.rescale.com;https://itar-staging.rescale.com",
+    ["LOC"] = "http://platform-local.rescale.com:8005",
+    ["CNDE"] = "http://platform.zeph.local.rescale.internal",
+}
+
+spoon.ShortcutJumper:setUp(platforms, "~/.hammerspoon/shorcuts.json", "~/.hammerspoon/platform-shortcuts.json")
+
+spoon.ShortcutJumper:bindHotkeys({
+    show={{"alt"}, "j"}
+})
+
 package.path = package.path .. ";" ..  hs.configdir .. "/MySpoons/?.spoon/init.lua"
 
 require("util")
-require("shortcutjumper")
+-- require("shortcutjumper")
 
 -- Focus the last used window.
 local function focusLastFocused()
@@ -49,12 +73,8 @@ emojiChooser:bgDark(true)
 
 hs.hotkey.bind({"cmd", "alt"}, "E", function() emojiChooser:show() end)
 
-hs.hotkey.bind({"alt"}, "J", function()
-    shortcutChooser:show()
-end)
 
-
-hs.hotkey.bind({"cmd","alt"}, "J", nil, function()
+hs.hotkey.bind({"cmd","alt"}, "M", nil, function()
     hs.alert('rawr')
 end)
 
@@ -244,7 +264,7 @@ bindKeyToApplication("F", "Firefox")
 bindKeyToApplication("G", "Safari")
 bindKeyToApplication("H", "Google Chrome")
 bindKeyToApplication("I", "IntelliJ IDEA CE")
--- J is reserved for the shortcut jumper
+-- J for shortcut jumper (now in spoon, so using bindhotkeys)
 bindKeyToApplication("K", "Slack")
 bindKeyToApplication("L", "Google Calendar")
 -- M
