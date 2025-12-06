@@ -9,6 +9,13 @@ obj.__gc = function(t)
     t:stop()
 end
 
+-- Focus the last used window.
+local function focusLastFocused()
+    local wf = hs.window.filter
+    local lastFocused = wf.defaultCurrentSpace:getWindows(wf.sortByFocusedLast)
+    if #lastFocused > 0 then lastFocused[1]:focus() end
+end
+
 -- Metadata
 obj.name = "ShortcutJumper"
 obj.version = "0.1"
@@ -132,8 +139,9 @@ function openURL(uses_querystring, acceptsIDs, url, app, querystring)
                       ["Google Chrome"]="com.google.Chrome",
                       ["Safari"]="com.apple.Safari",
                       ["safari"]="com.apple.Safari",
-                      ["firefox"]="com.mozilla.firefox",
-                      ["Firefox"]="com.mozilla.firefox"}
+                      ["firefox"]="org.mozilla.firefox",
+                      ["Firefox"]="org.mozilla.firefox",
+                      ["Brave"]="com.brave.Browser"}
     app_id = app_id_for_app[app]
     hs.urlevent.openURLWithBundle(escaped_url, app_id)
 end

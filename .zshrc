@@ -175,6 +175,44 @@ docker-login() {
     aws --profile $1 ecr get-login-password --region $REGION | docker login --username AWS --password-stdin $ACCOUNT.dkr.ecr.$REGION.amazonaws.com
 }
 
+run-claude() {
+    ENV="ai-dev"
+    SSO_ACCOUNT=$(aws sts get-caller-identity --query "Account" --profile $ENV)
+    RET_VAL=$?
+
+    if [[ "$RET_VAL" -eq 0 ]]; then
+        echo "AWS SSO Session is active for account: $SSO_ACCOUNT"
+    else
+        echo "AWS SSO Session is inactive. Re-authenticating"
+        aws --profile $ENV sso login
+    fi
+
+    # Enable Bedrock integration
+    export CLAUDE_CODE_USE_BEDROCK=1
+    export AWS_REGION=us-west-2
+    export CLAUDE_CODE_MAX_OUTPUT_TOKENS=8192
+    export MAX_THINKING_TOKENS=1024
+    export AWS_PROFILE=ai-dev
+
+    export ANTHROPIC_DEFAULT_HAIKU_MODEL='arn:aws:bedrock:us-west-2:804686432236:application-inference-profile/yuar18tste9m'
+    export ANTHROPIC_DEFAULT_OPUS_MODEL='arn:aws:bedrock:us-west-2:804686432236:application-inference-profile/ev0b0i920cy1'
+    export ANTHROPIC_DEFAULT_SONNET_MODEL='arn:aws:bedrock:us-west-2:804686432236:application-inference-profile/n4ktxl8fuuuf'
+    export ANTHROPIC_SMALL_FAST_MODEL='arn:aws:bedrock:us-west-2:804686432236:application-inference-profile/yuar18tste9m'
+
+    # if using subagents uncomment and set accordingly
+    # export CLAUDE_CODE_SUBAGENT_MODEL='<sonnet app-inference-profile-arn-from-command-result-above>'
+
+    claude
+}
+
+get-cnde-api-pod() {
+    k get pods | grep web-api | cut -f 1 -d " "
+}
+
+get-cnde-celery-pod() {
+    k get pods | grep celery-worker | cut -f 1 -d " "
+}
+
 deprod-grafana() {
     aws eks update-kubeconfig --region eu-central-1 --name deprod-infra --profile prod
 

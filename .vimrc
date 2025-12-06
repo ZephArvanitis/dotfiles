@@ -103,6 +103,7 @@ syntax on
 set backspace=indent,eol,start
 " Line numbers
 set number
+set relativenumber
 " Indentation!
 set smartindent
 set cindent
@@ -125,7 +126,7 @@ set scrolloff=5
 " Set up nice tabbing
 map <C-h> :tabp<CR>
 map <C-l> :tabn<CR>
-map <C-t> :tabnew 
+map <C-t> :tabnew
 set autochdir
 " Line wrapping!
 set textwidth=75

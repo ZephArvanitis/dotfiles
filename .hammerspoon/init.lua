@@ -15,14 +15,14 @@ platforms = {
     ["DEV"] = "https://platform-dev.rescale.com",
     ["IL5ST"] = "https://platform.mil-staging.rescale-gov.com",
     ["GOVST"] = "https://itar-staging.rescale.com",
-    ["ALLPROD"] = "https://kr.rescale.com;https://platform.rescale.jp;https://platform.rescale.com;https://itar.rescale.com;https://eu.rescale.com",
+    ["ALLPR"] = "https://kr.rescale.com;https://platform.rescale.jp;https://platform.rescale.com;https://itar.rescale.com;https://eu.rescale.com",
     ["DEVALL"] = "https://platform-dev.rescale.com",
     ["STALL"] = "https://platform-stage.rescale.com;https://itar-staging.rescale.com",
     ["LOC"] = "http://platform-local.rescale.com:8005",
-    ["CNDE"] = "http://platform.zeph.local.rescale.internal",
+    ["CNDE"] = "https://platform.zeph.local.rescale.internal",
 }
 
-spoon.ShortcutJumper:setUp(platforms, "~/.hammerspoon/shorcuts.json", "~/.hammerspoon/platform-shortcuts.json")
+spoon.ShortcutJumper:setUp(platforms, "~/.hammerspoon/shortcuts.json", "~/.hammerspoon/platform-shortcuts.json")
 
 spoon.ShortcutJumper:bindHotkeys({
     show={{"alt"}, "j"}
@@ -73,10 +73,6 @@ emojiChooser:bgDark(true)
 
 hs.hotkey.bind({"cmd", "alt"}, "E", function() emojiChooser:show() end)
 
-
-hs.hotkey.bind({"cmd","alt"}, "M", nil, function()
-    hs.alert('rawr')
-end)
 
 -- function applicationWatcher(appName, eventType, appObject)
 --     if (appName == "Safari" or appName == "Google Chrome") then
